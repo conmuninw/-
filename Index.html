@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Trading Journal Pro</title>
+    <title>Trading Journal Pro (Debug Mode)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -14,19 +14,14 @@
         .input-dark:focus { border-color: #3b82f6; outline: none; ring: 2px; }
         .tab-active { border-bottom: 2px solid #3b82f6; color: #3b82f6; }
         .tab-inactive { color: #64748b; }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #0f172a; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
     </style>
 </head>
 <body class="min-h-screen pb-20">
 
     <!-- Config Area -->
     <script>
-        // ⚠️ วาง URL ของคุณที่นี่ (URL เดิมที่ให้มา หรืออันใหม่ถ้า Deploy ใหม่)
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbznUNOAFHH_SzZH1qbgxb4uw3U_P3QTePp82GOECLJru4Qm2ZzZZQ3Ye3cF82yeF7MwcQ/exec';
+        // ⚠️⚠️ วาง URL ล่าสุดของคุณที่นี่ ⚠️⚠️
+        const scriptURL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLiglfxd3KM4szsrgnyZzvL0hqR_d8ZsZJKzOjwqL8jtTIlMGtMSwuaCrqP1WB7Ik-I6T0KVj-wGuB7sFSVETkNSN30zR3SK9yIXHQmnVv0UXg9iPFwZD72DD3oA0bDYf0pkyL3s12HK7rzEu0J494zztVR-ghqeXVsr4e535lSdbVadZVbHWe0FPrypaujZz-N_E3ob8rpPNBPplGzOt6Uom9vs1tT9dk_TcQbAoNWBFAqsf1PYdN9hlSaU88eC2uu1TWKAzQGEkdEahVZdm813D2RDI6jVh-8Ifn29&lib=MruwxJIRisg5ma7JSjx1F-L3SafOLewCU'; 
     </script>
 
     <!-- Top Navigation -->
@@ -55,6 +50,10 @@
 
     <!-- Main Content -->
     <div class="max-w-lg mx-auto mt-28 px-4">
+
+        <!-- Error Debug Box (จะโชว์เมื่อมีปัญหา) -->
+        <div id="debug-box" class="hidden bg-red-900/50 border border-red-500 text-red-200 p-4 rounded-xl mb-4 text-xs font-mono break-all">
+        </div>
 
         <!-- SECTION: RECORD FORM -->
         <div id="view-record" class="animate-fade-in">
@@ -225,7 +224,6 @@
 
     <script>
         // --- LOGIC ---
-
         function switchTab(tab) {
             const recordView = document.getElementById('view-record');
             const dashView = document.getElementById('view-dashboard');
@@ -242,7 +240,7 @@
                 dashView.classList.remove('hidden');
                 tabRecord.className = "flex-1 py-3 text-sm font-medium tab-inactive text-center";
                 tabDash.className = "flex-1 py-3 text-sm font-medium tab-active text-center";
-                fetchData(); // Load data when switching to dashboard
+                fetchData(); 
             }
         }
 
@@ -261,35 +259,29 @@
                 if (position === 'BUY') diff = exit - entry;
                 if (position === 'SELL') diff = entry - exit;
 
-                // Simple Calculation for XAU/EUR (Standard Lot = 100,000 units)
-                // This is an estimation. XAU 1 point = $1 per 1 lot. EURUSD 1 pip = $10 per 1 lot.
-                // Let's assume Standard Contract Size approximation for display
-                
-                // Determine multiplier roughly (XAU ~ 100, Pairs ~ 100000)
                 const pair = document.querySelector('select[name="Pair"]').value;
                 let profit = 0;
                 let points = 0;
 
                 if(pair.includes('XAU') || pair.includes('BTC')) {
-                    profit = diff * lot * 100; // Gold
-                    points = diff * 100; // Points
+                    profit = diff * lot * 100;
+                    points = diff * 100;
                 } else if (pair.includes('JPY')) {
-                    profit = diff * lot * 1000; // JPY Pairs usually
+                    profit = diff * lot * 1000;
                     points = diff * 100; 
                 } else {
-                    profit = diff * lot * 100000; // Major Pairs
+                    profit = diff * lot * 100000;
                     points = diff * 100000;
                 }
 
                 plInput.value = profit.toFixed(2);
                 pipsLabel.innerText = Math.round(points) + " Points";
 
-                // Update Style
                 if(profit > 0) {
-                    plInput.style.color = '#4ade80'; // Green
+                    plInput.style.color = '#4ade80';
                     resultSelect.value = 'WIN';
                 } else if (profit < 0) {
-                    plInput.style.color = '#f87171'; // Red
+                    plInput.style.color = '#f87171';
                     resultSelect.value = 'LOSS';
                 } else {
                     plInput.style.color = 'white';
@@ -298,19 +290,39 @@
             }
         }
 
-        // Fetch Data for Dashboard
+        // Fetch Data for Dashboard (DEBUG VERSION)
         function fetchData() {
-            const historyList = document.getElementById('history-list');n
+            const historyList = document.getElementById('history-list');
+            const debugBox = document.getElementById('debug-box');
             
+            if (scriptURL === 'YOUR_WEB_APP_URL_HERE' || scriptURL === '') {
+                debugBox.classList.remove('hidden');
+                debugBox.innerText = "❌ Error: ยังไม่ได้ใส่ URL ของ Apps Script ครับ";
+                return;
+            }
+
             fetch(scriptURL)
-            .then(res => res.json())
+            .then(res => {
+                // เช็คว่าตอบกลับเป็น JSON ไหม
+                const contentType = res.headers.get("content-type");
+                if (contentType && contentType.indexOf("application/json") !== -1) {
+                    return res.json();
+                } else {
+                    // ถ้าไม่ใช่ JSON แปลว่า Error (เช่นส่ง HTML กลับมา)
+                    return res.text().then(text => {
+                        throw new Error("API ส่งค่าแปลกๆ กลับมา (ไม่ใช่ JSON): " + text.substring(0, 100));
+                    });
+                }
+            })
             .then(data => {
-                // Data is array of rows [Date, Time, Pair, Pos, Lot, Entry, Exit, Result, PL...]
+                debugBox.classList.add('hidden'); // ซ่อน Debug ถ้าสำเร็จ
                 processStats(data);
             })
             .catch(err => {
                 console.error(err);
-                historyList.innerHTML = '<div class="p-4 text-center text-red-400 text-sm">ไม่สามารถดึงข้อมูลได้<br>กรุณาตรวจสอบว่าอัปเดต Google Apps Script เป็น doGet แล้วหรือยัง</div>';
+                debugBox.classList.remove('hidden');
+                debugBox.innerHTML = `⚠️ <b>โหลดข้อมูลไม่ได้:</b><br>${err.message}<br><br>👉 <b>วิธีแก้:</b> ลองเช็คชื่อ Sheet หรือลอง Deploy ใหม่อีกครั้ง`;
+                historyList.innerHTML = '<div class="p-4 text-center text-red-400 text-sm">โหลดข้อมูลไม่สำเร็จ</div>';
             });
         }
 
@@ -324,13 +336,11 @@
             let winCount = 0;
             let lossCount = 0;
 
-            // Prepare History HTML
             let historyHTML = '';
-            // Get last 5 trades (reversed)
             const recent = rows.slice(-5).reverse();
 
             recent.forEach(row => {
-                // Assuming Index: Pair=2, Pos=3, Result=7, PL=8
+                // Column Map: Pair=2, Pos=3, Result=7, PL=8
                 const pair = row[2];
                 const pos = row[3];
                 const res = row[7];
@@ -358,10 +368,9 @@
 
             document.getElementById('history-list').innerHTML = historyHTML || '<div class="p-4 text-center text-slate-500">ยังไม่มีข้อมูล</div>';
 
-            // Calculate Stats
             rows.forEach(row => {
-                const res = row[7]; // Result Column
-                const pl = parseFloat(row[8]) || 0; // P/L Column
+                const res = row[7];
+                const pl = parseFloat(row[8]) || 0;
 
                 totalPL += pl;
 
@@ -371,7 +380,7 @@
                     winCount++;
                 } else if (res === 'LOSS') {
                     losses++;
-                    totalLossAmt += pl; // usually negative
+                    totalLossAmt += pl; 
                     lossCount++;
                 }
             });
@@ -380,7 +389,6 @@
             const avgWin = winCount > 0 ? (totalWinAmt / winCount).toFixed(2) : 0;
             const avgLoss = lossCount > 0 ? (totalLossAmt / lossCount).toFixed(2) : 0;
 
-            // Update UI
             document.getElementById('dash-winrate').innerText = `${winRate}%`;
             document.getElementById('dash-winrate').className = `text-2xl font-bold mt-1 ${winRate >= 50 ? 'text-green-400' : 'text-red-400'}`;
             document.getElementById('dash-winloss').innerText = `W:${wins} L:${losses} D:${totalTrades - wins - losses}`;
@@ -401,17 +409,14 @@
         form.addEventListener('submit', e => {
             e.preventDefault();
             
-            // UI Loading
             const originalBtnContent = submitBtn.innerHTML;
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> กำลังบันทึก...';
 
-            // Set Time
             const now = new Date();
             document.getElementById('dateField').value = now.toLocaleDateString('th-TH');
             document.getElementById('timeField').value = now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
 
-            // Prepare Data
             const formData = new FormData(form);
             const dataObj = {};
             formData.forEach((value, key) => { dataObj[key] = value });
@@ -426,8 +431,8 @@
                 form.reset();
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnContent;
-                // Switch to dashboard to see update? Optional.
-                // switchTab('dashboard'); 
+                // Refresh dashboard if needed
+                // fetchData();
             })
             .catch(error => {
                 console.error('Error!', error.message);
@@ -460,5 +465,4 @@
     </script>
 </body>
 </html>
-
 
