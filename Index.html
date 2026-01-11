@@ -9,21 +9,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #cbd5e1; }
-        
-        /* Soft Dark Theme */
-        .glass-panel { background: #1e293b; border: 1px solid #334155; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .glass-panel { background: #1e293b; border: 1px solid #334155; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .input-soft { background-color: #334155; border: 1px solid #475569; color: #f1f5f9; transition: all 0.2s; }
         .input-soft:focus { border-color: #2dd4bf; outline: none; background-color: #1e293b; }
-        
-        /* Accents */
         .accent-teal { color: #2dd4bf; }
-        .bg-accent-teal { background-color: #2dd4bf; color: #0f172a; }
-        
-        /* Tabs */
         .tab-btn { transition: all 0.3s; border-bottom: 2px solid transparent; opacity: 0.6; }
         .tab-btn.active { border-color: #2dd4bf; color: #2dd4bf; opacity: 1; font-weight: 600; }
-
-        /* Animation */
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -31,7 +22,7 @@
 <body class="min-h-screen pb-24 text-sm">
 
     <script>
-        // ⚠️⚠️ วาง URL ใหม่ของคุณที่นี่ ⚠️⚠️
+        // ⚠️⚠️ วาง URL ของคุณที่นี่ ⚠️⚠️
         const scriptURL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhl3V49l8F2TJM3nhdXW_Bjahq-Vk0Ax5N5U20T-wamOmNp_shf-DfjKS6UJJUZYiTO5FykwXz9rlf7t-V1_G2tg3MJUzAg6zVPs2WlPU-Oe8XfTE06KrmV4fmIRPaGj2tc1vP52dEdalRGVhN0IbOJaT7Ow4QrRzQ_SxBRjSl0TlXeXe255_sr-7i5LkOs0l0EuQFaD3XOk5G5ZCQGuviFCNkOVe6DLPypD5VVHkspmlZ1fZmtavIXlcX8tao9MgqsQlBfKNTut-IKEQiu09FepsY_rOT95GcG1uAi&lib=MruwxJIRisg5ma7JSjx1F-L3SafOLewCU'; 
     </script>
 
@@ -46,7 +37,6 @@
                 <i class="fa-solid fa-rotate text-slate-400 text-xs"></i>
             </button>
         </div>
-        <!-- Tabs -->
         <div class="max-w-lg mx-auto px-4 flex border-slate-700">
             <button onclick="switchTab('record')" id="tab-record" class="flex-1 py-3 tab-btn active">จดบันทึก</button>
             <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-3 tab-btn relative">
@@ -56,6 +46,9 @@
         </div>
     </nav>
 
+    <!-- Debug Log Box (จะโชว์เฉพาะเมื่อ Error) -->
+    <div id="error-box" class="hidden fixed top-20 left-4 right-4 bg-red-900/90 text-white p-4 rounded-xl z-50 text-xs font-mono break-all border border-red-500 shadow-2xl"></div>
+
     <!-- Main Content -->
     <div class="max-w-lg mx-auto mt-28 px-4">
 
@@ -63,7 +56,6 @@
         <div id="view-record" class="fade-in">
             <form id="createForm" class="space-y-4">
                 
-                <!-- 1. Pair & Lot -->
                 <div class="glass-panel rounded-2xl p-5 space-y-4">
                     <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">ข้อมูลเทรด</h3>
                     <div class="grid grid-cols-2 gap-3">
@@ -76,7 +68,6 @@
                         <input type="number" step="0.01" name="Lot" value="0.01" class="input-soft w-full rounded-xl p-3 text-center" placeholder="Lot Size">
                     </div>
                     
-                    <!-- Position Switch -->
                     <div class="bg-slate-700 p-1 rounded-xl flex">
                         <label class="flex-1 cursor-pointer">
                             <input type="radio" name="Position" value="BUY" class="peer hidden" checked>
@@ -91,48 +82,36 @@
                     <input type="number" step="0.01" name="Entry" placeholder="ราคาเข้า (Entry Price)" class="input-soft w-full rounded-xl p-3 text-center font-mono text-lg" required>
                 </div>
 
-                <!-- 2. Mental Check (Psycho Analysis) -->
                 <div class="glass-panel rounded-2xl p-5 border-l-4 border-indigo-500">
-                    <h3 class="text-indigo-400 text-xs font-bold uppercase tracking-wider mb-3"><i class="fa-solid fa-user-doctor mr-1"></i> ตรวจสุขภาพจิต (สำคัญ!)</h3>
-                    
+                    <h3 class="text-indigo-400 text-xs font-bold uppercase tracking-wider mb-3"><i class="fa-solid fa-user-doctor mr-1"></i> ตรวจสุขภาพจิต</h3>
                     <div class="space-y-3">
                         <div>
                             <label class="text-xs text-slate-500 mb-1 block">อารมณ์ตอนเข้า?</label>
                             <select name="Emotion" class="input-soft w-full rounded-lg p-2 text-sm">
-                                <option value="Neutral">😐 ปกติ / ทำตามแผน (Neutral)</option>
+                                <option value="Neutral">😐 ปกติ (Neutral)</option>
                                 <option value="Confident">😎 มั่นใจมาก (Confident)</option>
                                 <option value="FOMO">😱 กลัวตกรถ (FOMO)</option>
-                                <option value="Revenge">😡 หัวร้อน/เอาคืน (Revenge)</option>
-                                <option value="Bored">🥱 เบื่อ/คันมือ (Bored)</option>
+                                <option value="Revenge">😡 หัวร้อน (Revenge)</option>
                             </select>
                         </div>
                         <div>
-                            <label class="text-xs text-slate-500 mb-1 block">ระดับความเสี่ยงไม้เนี่ย?</label>
+                            <label class="text-xs text-slate-500 mb-1 block">ความเสี่ยง?</label>
                             <select name="Risk" class="input-soft w-full rounded-lg p-2 text-sm">
-                                <option value="Low">🟢 ต่ำ (Low Risk)</option>
+                                <option value="Low">🟢 ต่ำ (Low)</option>
                                 <option value="Medium">🟡 ปานกลาง (Medium)</option>
-                                <option value="High">🔴 สูง / สวนเทรนด์ (High Risk)</option>
+                                <option value="High">🔴 สูง (High)</option>
                             </select>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3. Technical Checklist -->
                 <div class="glass-panel rounded-2xl p-5">
                     <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-3">Technical Confirm</h3>
                     <div class="grid grid-cols-2 gap-3 text-xs">
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer">
-                            <input type="checkbox" name="H1 Trend" value="Yes" class="mr-2 accent-teal-500"> H1 Trend ตรง
-                        </label>
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer">
-                            <input type="checkbox" name="M15 Signal" value="Yes" class="mr-2 accent-teal-500"> EMA M15 ตัด
-                        </label>
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer">
-                            <input type="checkbox" name="ADX > 20" value="Yes" class="mr-2 accent-teal-500"> ADX > 20
-                        </label>
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer">
-                            <input type="checkbox" name="Retest" value="Yes" class="mr-2 accent-teal-500"> Retest แล้ว
-                        </label>
+                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer"><input type="checkbox" name="H1 Trend" value="Yes" class="mr-2"> H1 Trend</label>
+                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer"><input type="checkbox" name="M15 Signal" value="Yes" class="mr-2"> M15 Signal</label>
+                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer"><input type="checkbox" name="ADX > 20" value="Yes" class="mr-2"> ADX > 20</label>
+                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer"><input type="checkbox" name="Retest" value="Yes" class="mr-2"> Retest</label>
                     </div>
                 </div>
 
@@ -152,116 +131,67 @@
             <div id="active-list" class="space-y-3"></div>
         </div>
 
-        <!-- TAB 3: DASHBOARD & ANALYSIS -->
+        <!-- TAB 3: DASHBOARD -->
         <div id="view-dashboard" class="hidden fade-in space-y-6">
-            
-            <!-- Big Stats -->
             <div class="grid grid-cols-2 gap-4">
-                <div class="glass-panel rounded-2xl p-5 text-center relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-2 opacity-10"><i class="fa-solid fa-trophy text-6xl"></i></div>
+                <div class="glass-panel rounded-2xl p-5 text-center">
                     <p class="text-xs text-slate-400 uppercase">Win Rate</p>
                     <h2 id="dash-winrate" class="text-3xl font-bold mt-1 text-slate-200">--%</h2>
                 </div>
-                <div class="glass-panel rounded-2xl p-5 text-center relative overflow-hidden">
-                    <div class="absolute top-0 right-0 p-2 opacity-10"><i class="fa-solid fa-coins text-6xl"></i></div>
+                <div class="glass-panel rounded-2xl p-5 text-center">
                     <p class="text-xs text-slate-400 uppercase">Net P/L</p>
                     <h2 id="dash-profit" class="text-3xl font-bold mt-1 text-slate-200">--</h2>
                 </div>
             </div>
-
-            <!-- Psycho Analysis Card -->
             <div class="glass-panel rounded-2xl p-5 border-t-4 border-purple-500">
-                <h3 class="font-bold text-slate-200 mb-4"><i class="fa-solid fa-wand-magic-sparkles text-purple-400 mr-2"></i>วิเคราะห์พฤติกรรมเทรด</h3>
-                <div id="psycho-feedback" class="text-sm text-slate-300 leading-relaxed">
-                    กำลังประมวลผลข้อมูล...
-                </div>
+                <h3 class="font-bold text-slate-200 mb-4">วิเคราะห์พฤติกรรม</h3>
+                <div id="psycho-feedback" class="text-sm text-slate-300">รอข้อมูล...</div>
             </div>
-
-            <!-- History List -->
             <div>
-                <h3 class="text-xs font-bold text-slate-500 uppercase mb-3 ml-1">ประวัติล่าสุด (กดเพื่อดู)</h3>
+                <h3 class="text-xs font-bold text-slate-500 uppercase mb-3 ml-1">ประวัติล่าสุด</h3>
                 <div id="history-list" class="space-y-2"></div>
             </div>
         </div>
 
     </div>
 
-    <!-- DETAIL / CLOSE MODAL -->
+    <!-- MODAL -->
     <div id="detailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-4 fade-in">
         <div class="bg-slate-800 rounded-2xl w-full max-w-sm border border-slate-600 shadow-2xl max-h-[90vh] overflow-y-auto">
-            
-            <!-- Modal Header -->
             <div class="bg-slate-900/50 p-4 border-b border-slate-700 flex justify-between items-center sticky top-0">
-                <div>
-                    <span id="modalID" class="text-[10px] text-slate-500 block">ID: ORD-1234</span>
-                    <h3 class="font-bold text-lg text-white" id="modalTitle">XAUUSD</h3>
-                </div>
+                <div><span id="modalID" class="text-[10px] text-slate-500 block"></span><h3 class="font-bold text-lg text-white" id="modalTitle"></h3></div>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-white p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-
             <div class="p-5 space-y-5">
-                
-                <!-- Status & Info -->
                 <div class="grid grid-cols-2 gap-4 text-center">
-                    <div class="bg-slate-700/50 p-3 rounded-xl">
-                        <p class="text-xs text-slate-400">Entry</p>
-                        <p id="modalEntry" class="font-mono text-lg text-teal-400">1900.00</p>
-                    </div>
-                    <div class="bg-slate-700/50 p-3 rounded-xl">
-                        <p class="text-xs text-slate-400">Lot Size</p>
-                        <p id="modalLot" class="font-mono text-lg text-white">0.01</p>
-                    </div>
+                    <div class="bg-slate-700/50 p-3 rounded-xl"><p class="text-xs text-slate-400">Entry</p><p id="modalEntry" class="font-mono text-lg text-teal-400"></p></div>
+                    <div class="bg-slate-700/50 p-3 rounded-xl"><p class="text-xs text-slate-400">Lot</p><p id="modalLot" class="font-mono text-lg text-white"></p></div>
                 </div>
-
-                <!-- Analysis Tags -->
-                <div class="flex flex-wrap gap-2 justify-center" id="modalTags">
-                    <!-- Tags will be injected here -->
-                </div>
-
-                <!-- Checklist Viewer -->
-                <div class="space-y-2 bg-slate-700/30 p-3 rounded-xl">
-                    <p class="text-xs text-slate-500 mb-1">Checklist ที่ทำไว้:</p>
-                    <div id="modalChecklist" class="grid grid-cols-2 gap-2 text-xs text-slate-300">
-                        <!-- Dynamic Checkbox status -->
-                    </div>
-                </div>
-
-                <!-- Close Form (Show only if Running) -->
+                <div class="flex flex-wrap gap-2 justify-center" id="modalTags"></div>
                 <form id="closeForm" class="space-y-4 pt-4 border-t border-slate-700">
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="id" id="formId">
-                    
                     <div id="closeSection">
-                        <label class="text-xs text-slate-400 mb-1 block">ราคาปิด (Exit Price)</label>
-                        <input type="number" step="0.01" name="Exit" id="modalExit" class="input-soft w-full rounded-xl p-3 text-center text-xl font-bold text-amber-400" placeholder="0.00" oninput="calcModalPL()">
-                        
+                        <label class="text-xs text-slate-400 mb-1 block">Exit Price</label>
+                        <input type="number" step="0.01" name="Exit" id="modalExit" class="input-soft w-full rounded-xl p-3 text-center text-xl font-bold text-amber-400" placeholder="0.00">
                         <div class="flex justify-between items-center mt-3 bg-slate-900 p-3 rounded-lg">
-                             <span class="text-slate-400 text-xs">กำไร/ขาดทุน:</span>
+                             <span class="text-slate-400 text-xs">P/L:</span>
                              <input type="text" name="P/L ($)" id="modalPL" class="bg-transparent text-right font-bold w-24 outline-none" readonly>
                         </div>
                         <input type="hidden" name="Result" id="modalResult">
-
                         <div class="mt-3">
-                            <label class="text-xs text-slate-400 mb-1 block">บทเรียน/ข้อผิดพลาด</label>
-                            <textarea name="Review" class="input-soft w-full rounded-xl p-2 text-sm h-20" placeholder="เทรดนี้สอนอะไรเราบ้าง?"></textarea>
+                            <label class="text-xs text-slate-400 mb-1 block">Review</label>
+                            <textarea name="Review" class="input-soft w-full rounded-xl p-2 text-sm h-20"></textarea>
                         </div>
-
-                        <button type="submit" id="btnCloseConfirm" class="w-full mt-4 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl">
-                            ยืนยันปิดออเดอร์
-                        </button>
+                        <button type="submit" id="btnCloseConfirm" class="w-full mt-4 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl">ยืนยันปิด</button>
                     </div>
-
-                    <!-- Readonly View for History -->
-                    <div id="historySection" class="hidden text-center">
-                        <p class="text-sm text-slate-400">ออเดอร์นี้ปิดไปแล้ว</p>
-                        <p id="historyPL" class="text-2xl font-bold mt-2"></p>
-                    </div>
+                    <div id="historySection" class="hidden text-center"><p class="text-sm text-slate-400">Closed</p><p id="historyPL" class="text-2xl font-bold mt-2"></p></div>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- Toast -->
     <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl text-sm border border-slate-600 transition-all duration-300 -translate-y-20 opacity-0 z-[60] flex items-center gap-2">
         <i class="fa-solid fa-circle-check text-teal-400"></i> <span id="toastMsg">Saved!</span>
     </div>
@@ -272,10 +202,8 @@
         function switchTab(tab) {
             document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
             document.getElementById(`view-${tab}`).classList.remove('hidden');
             document.getElementById(`tab-${tab}`).classList.add('active');
-            
             if(tab === 'active' || tab === 'dashboard') fetchData();
         }
 
@@ -286,11 +214,16 @@
             setTimeout(() => t.classList.add('-translate-y-20', 'opacity-0'), 3000);
         }
 
-        // --- FETCH DATA ---
+        function showError(msg) {
+            const box = document.getElementById('error-box');
+            box.innerHTML = `⚠️ <b>Error:</b> ${msg}<br><br><span class="opacity-70">ลองตรวจสอบ URL หรือเปิดสิทธิ์ Anyone ใน Apps Script</span>`;
+            box.classList.remove('hidden');
+            setTimeout(() => box.classList.add('hidden'), 8000);
+        }
+
+        // --- FETCH DATA FIX (สำคัญมาก!) ---
         function fetchData() {
-            if(!scriptURL || scriptURL.includes('HERE')) {
-                showToast('❌ ยังไม่ได้ใส่ URL Script'); return;
-            }
+            if(!scriptURL || scriptURL.includes('HERE')) { showError('URL ไม่ถูกต้อง'); return; }
             
             fetch(scriptURL)
             .then(res => res.json())
@@ -304,142 +237,81 @@
                 allData = rows;
                 renderActive(rows);
                 renderDashboard(rows);
+            })
+            .catch(err => {
+                console.error(err);
+                showError('โหลดข้อมูลไม่สำเร็จ: ' + err.message);
             });
         }
 
-        // --- RENDER ACTIVE ---
         function renderActive(rows) {
             const list = document.getElementById('active-list');
             const active = rows.filter(r => r.Result === 'RUNNING' || !r.Exit);
-            
-            // Update Badge
             const badge = document.getElementById('badge-active');
+            
             if(active.length > 0) { badge.innerText = active.length; badge.classList.remove('hidden'); }
             else { badge.classList.add('hidden'); }
 
-            if(active.length === 0) {
-                list.innerHTML = `<div class="text-center py-10 opacity-30"><i class="fa-solid fa-mug-hot text-4xl mb-2"></i><p>ไม่มีออเดอร์ค้าง สบายใจจัง</p></div>`;
-                return;
-            }
+            if(active.length === 0) { list.innerHTML = `<div class="text-center py-10 opacity-30"><p>ว่างเปล่า...</p></div>`; return; }
 
             let html = '';
             active.reverse().forEach(item => {
-                const isBuy = item.Position === 'BUY';
-                const plClass = isBuy ? 'text-emerald-400' : 'text-rose-400';
-                
-                // Risk Badge
-                let riskBadge = '';
-                if(item.Risk === 'High') riskBadge = '<span class="text-[10px] bg-rose-900 text-rose-300 px-1 rounded">High Risk</span>';
-                else if(item.Risk === 'Medium') riskBadge = '<span class="text-[10px] bg-amber-900 text-amber-300 px-1 rounded">Med Risk</span>';
-
                 html += `
-                <div onclick='openModal(${JSON.stringify(item)})' class="glass-panel p-4 rounded-xl flex justify-between items-center cursor-pointer hover:bg-slate-800 transition">
+                <div onclick='openModal(${JSON.stringify(item)})' class="glass-panel p-4 rounded-xl flex justify-between items-center cursor-pointer hover:bg-slate-800 transition mb-3">
                     <div>
                         <div class="flex items-center gap-2">
                             <span class="font-bold text-slate-200">${item.Pair}</span>
-                            <span class="text-xs font-bold ${plClass}">${item.Position}</span>
-                            ${riskBadge}
+                            <span class="text-xs font-bold ${item.Position==='BUY'?'text-emerald-400':'text-rose-400'}">${item.Position}</span>
                         </div>
-                        <div class="text-xs text-slate-500 mt-1">
-                            Entry: ${item.Entry} • Lot: ${item.Lot}
-                        </div>
+                        <div class="text-xs text-slate-500 mt-1">Lot: ${item.Lot} • Entry: ${item.Entry}</div>
                     </div>
-                    <div class="text-right">
-                        <span class="text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-full">แก้ไข / ปิด</span>
-                    </div>
+                    <div class="text-right"><span class="text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-full">แก้ไข</span></div>
                 </div>`;
             });
             list.innerHTML = html;
         }
 
-        // --- RENDER DASHBOARD & HISTORY ---
         function renderDashboard(rows) {
             const closed = rows.filter(r => r.Result !== 'RUNNING' && r.Exit);
-            const historyList = document.getElementById('history-list');
-
-            // 1. Stats
             let wins=0, totalPL=0;
-            closed.forEach(r => {
-                if(r.Result === 'WIN') wins++;
-                totalPL += parseFloat(r['P/L ($)'] || 0);
-            });
+            closed.forEach(r => { if(r.Result === 'WIN') wins++; totalPL += parseFloat(r['P/L ($)'] || 0); });
+            
             const winRate = closed.length ? Math.round((wins/closed.length)*100) : 0;
-            
             document.getElementById('dash-winrate').innerText = `${winRate}%`;
-            document.getElementById('dash-winrate').className = `text-3xl font-bold mt-1 ${winRate>=50 ? 'text-emerald-400':'text-rose-400'}`;
-            
             document.getElementById('dash-profit').innerText = `${totalPL>0?'+':''}${totalPL.toFixed(2)}`;
-            document.getElementById('dash-profit').className = `text-3xl font-bold mt-1 ${totalPL>=0 ? 'text-teal-400':'text-rose-400'}`;
 
-            // 2. Psycho Analysis Logic
-            const emotionBad = closed.filter(r => (r.Emotion === 'FOMO' || r.Emotion === 'Revenge') && r.Result === 'LOSS').length;
-            const riskBad = closed.filter(r => r.Risk === 'High' && r.Result === 'LOSS').length;
-            
-            let feedback = '';
-            if(closed.length === 0) {
-                feedback = "ยังไม่มีข้อมูลเพียงพอ เริ่มบันทึกเทรดไม้แรกกันเลย!";
-            } else if (emotionBad > 0) {
-                feedback = `⚠️ <span class="text-rose-400 font-bold">จุดอันตราย:</span> คุณขาดทุนจากการใช้อารมณ์ (FOMO/Revenge) ไป ${emotionBad} ครั้ง! หยุดพักหายใจก่อนกดไม้ต่อไปนะครับ`;
-            } else if (riskBad > 1) {
-                feedback = `🛑 <span class="text-amber-400 font-bold">เสี่ยงเกินไป:</span> คุณเข้าไม้ High Risk แล้วแพ้บ่อย ลองลดความเสี่ยงหรือรอ Trade Setup ชัวร์ๆ ดีกว่า`;
-            } else if (winRate > 60) {
-                feedback = `🌟 <span class="text-emerald-400 font-bold">ยอดเยี่ยม!</span> คุณกำลังอยู่ในโซนที่ดี วินัยดีเยี่ยม รักษามาตรฐานนี้ไว้นะครับ`;
-            } else {
-                feedback = `📉 <span class="text-slate-300">สภาพทั่วไป:</span> มาตรฐานกลางๆ ลองกลับไปรีวิวไม้ที่แพ้แล้วเขียนบันทึกเพิ่มเติมนะ`;
-            }
-            document.getElementById('psycho-feedback').innerHTML = feedback;
+            let psychoHTML = '';
+            const badEmo = closed.filter(r => (r.Emotion==='FOMO'||r.Emotion==='Revenge') && r.Result==='LOSS').length;
+            if(badEmo > 0) psychoHTML = `⚠️ เสียเพราะอารมณ์ ${badEmo} ครั้ง! ใจเย็นๆ นะ`;
+            else if(winRate > 60) psychoHTML = `🌟 ฟอร์มกำลังดี รักษามาตรฐานไว้!`;
+            else psychoHTML = `📉 สู้ต่อไป ลองลดความเสี่ยงดูนะ`;
+            document.getElementById('psycho-feedback').innerHTML = psychoHTML;
 
-
-            // 3. History List
             let histHtml = '';
-            closed.slice(-10).reverse().forEach(item => {
+            closed.slice(-5).reverse().forEach(item => {
                 const pl = parseFloat(item['P/L ($)'] || 0);
-                const plClass = pl >= 0 ? 'text-emerald-400' : 'text-rose-400';
-                
-                // Show Emotion icon if negative
-                let emoIcon = '';
-                if(item.Emotion === 'FOMO') emoIcon = '😱';
-                else if(item.Emotion === 'Revenge') emoIcon = '🤬';
-
                 histHtml += `
-                <div onclick='openModal(${JSON.stringify(item)})' class="flex justify-between items-center p-3 border-b border-slate-700/50 hover:bg-slate-800/50 cursor-pointer rounded-lg">
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 rounded-full ${pl>=0?'bg-emerald-500':'bg-rose-500'}"></div>
-                        <span class="font-bold text-slate-300">${item.Pair}</span>
-                        <span class="text-[10px] text-slate-500">${emoIcon} ${item.Position}</span>
-                    </div>
-                    <span class="font-mono font-bold ${plClass}">${pl>0?'+':''}${pl.toFixed(2)}$</span>
+                <div onclick='openModal(${JSON.stringify(item)})' class="flex justify-between items-center p-3 border-b border-slate-700/50 hover:bg-slate-800/50 cursor-pointer">
+                    <div class="flex items-center gap-2"><span class="font-bold text-slate-300">${item.Pair}</span><span class="text-[10px] text-slate-500">${item.Position}</span></div>
+                    <span class="font-mono font-bold ${pl>=0?'text-emerald-400':'text-rose-400'}">${pl>0?'+':''}${pl.toFixed(2)}$</span>
                 </div>`;
             });
-            historyList.innerHTML = histHtml || '<div class="text-center text-xs text-slate-600 mt-4">ไม่มีประวัติ</div>';
+            document.getElementById('history-list').innerHTML = histHtml || '<div class="text-center text-xs opacity-50 mt-4">ไม่มีประวัติ</div>';
         }
 
-
-        // --- MODAL LOGIC (The Core Feature) ---
+        // --- MODAL & CALCULATOR ---
         function openModal(item) {
             const m = document.getElementById('detailModal');
             const isRunning = (item.Result === 'RUNNING' || !item.Exit);
-
-            document.getElementById('modalID').innerText = `ID: ${item.ID} • ${item.Date}`;
-            document.getElementById('modalTitle').innerHTML = `${item.Pair} <span class="${item.Position==='BUY'?'text-emerald-400':'text-rose-400'}">${item.Position}</span>`;
+            document.getElementById('modalID').innerText = `ID: ${item.ID}`;
+            document.getElementById('modalTitle').innerHTML = `${item.Pair} ${item.Position}`;
             document.getElementById('modalEntry').innerText = item.Entry;
             document.getElementById('modalLot').innerText = item.Lot;
 
-            // Tags
-            let tagsHtml = `<span class="px-2 py-1 rounded bg-slate-700 text-xs text-slate-300 border border-slate-600">${item.Emotion || 'Neutral'}</span>`;
-            tagsHtml += `<span class="px-2 py-1 rounded bg-slate-700 text-xs text-slate-300 border border-slate-600">${item.Risk || 'Normal'} Risk</span>`;
-            document.getElementById('modalTags').innerHTML = tagsHtml;
+            let tags = `<span class="px-2 py-1 rounded bg-slate-700 text-xs text-slate-300">${item.Emotion}</span>`;
+            tags += `<span class="px-2 py-1 rounded bg-slate-700 text-xs text-slate-300 ml-2">${item.Risk} Risk</span>`;
+            document.getElementById('modalTags').innerHTML = tags;
 
-            // Checklist Visualizer
-            const checks = ['H1 Trend', 'M15 Signal', 'ADX > 20', 'Retest'];
-            let checkHtml = '';
-            checks.forEach(c => {
-                const isChecked = item[c] === 'Yes';
-                checkHtml += `<div class="flex items-center gap-2"><i class="fa-solid ${isChecked?'fa-check text-emerald-500':'fa-xmark text-slate-600'}"></i> <span>${c}</span></div>`;
-            });
-            document.getElementById('modalChecklist').innerHTML = checkHtml;
-
-            // Form Logic
             if(isRunning) {
                 document.getElementById('closeSection').classList.remove('hidden');
                 document.getElementById('historySection').classList.add('hidden');
@@ -447,40 +319,28 @@
                 document.getElementById('modalExit').value = '';
                 document.getElementById('modalPL').value = '';
                 
-                // Attach calculator event
                 document.getElementById('modalExit').oninput = function() {
-                    const exit = parseFloat(this.value);
-                    const entry = parseFloat(item.Entry);
-                    const lot = parseFloat(item.Lot);
+                    const exit = parseFloat(this.value); const entry = parseFloat(item.Entry); const lot = parseFloat(item.Lot);
                     if(!exit) return;
-                    
                     let diff = (item.Position === 'BUY') ? (exit - entry) : (entry - exit);
                     let mult = item.Pair.includes('JPY') ? 1000 : (item.Pair.includes('XAU') ? 100 : 100000);
                     let profit = diff * lot * mult;
-                    
-                    const plField = document.getElementById('modalPL');
-                    plField.value = profit.toFixed(2);
-                    plField.className = `bg-transparent text-right font-bold w-24 outline-none ${profit>=0?'text-emerald-400':'text-rose-400'}`;
+                    document.getElementById('modalPL').value = profit.toFixed(2);
+                    document.getElementById('modalPL').className = `bg-transparent text-right font-bold w-24 outline-none ${profit>=0?'text-emerald-400':'text-rose-400'}`;
                     document.getElementById('modalResult').value = profit>=0 ? 'WIN' : 'LOSS';
                 };
-
             } else {
-                // View Only Mode
                 document.getElementById('closeSection').classList.add('hidden');
                 document.getElementById('historySection').classList.remove('hidden');
                 const pl = parseFloat(item['P/L ($)']);
-                const plEl = document.getElementById('historyPL');
-                plEl.innerText = `${pl>0?'+':''}${pl.toFixed(2)}$`;
-                plEl.className = `text-3xl font-bold mt-2 ${pl>=0?'text-emerald-400':'text-rose-400'}`;
+                document.getElementById('historyPL').innerText = `${pl>0?'+':''}${pl.toFixed(2)}$`;
+                document.getElementById('historyPL').className = `text-2xl font-bold mt-2 ${pl>=0?'text-emerald-400':'text-rose-400'}`;
             }
-
             m.classList.remove('hidden');
         }
-
         function closeModal() { document.getElementById('detailModal').classList.add('hidden'); }
 
-
-        // --- SUBMIT FORMS ---
+        // --- SUBMIT FIX (ใช้ text/plain เพื่อแก้ CORS) ---
         document.getElementById('createForm').addEventListener('submit', handleForm);
         document.getElementById('closeForm').addEventListener('submit', handleForm);
 
@@ -488,8 +348,7 @@
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
             const originalText = btn.innerText;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'; btn.disabled = true;
 
             const now = new Date();
             document.getElementById('dateField').value = now.toLocaleDateString('th-TH');
@@ -498,33 +357,30 @@
             const formData = new FormData(e.target);
             const data = {};
             formData.forEach((v, k) => data[k] = v);
+            ['H1 Trend', 'M15 Signal', 'ADX > 20', 'Retest'].forEach(k => { if(!data[k]) data[k] = 'No'; });
 
-            // Default Checkbox
-            ['H1 Trend', 'M15 Signal', 'ADX > 20', 'Retest'].forEach(k => {
-                if(!data[k]) data[k] = 'No';
-            });
-
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify(data) })
+            // ⭐⭐ จุดเปลี่ยนสำคัญ: ใช้ Content-Type: text/plain และ redirect: follow ⭐⭐
+            fetch(scriptURL, {
+                redirect: "follow",
+                method: "POST",
+                body: JSON.stringify(data),
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+            })
             .then(res => res.json())
             .then(res => {
                 if(res.result === 'success' || res.result === 'updated') {
-                    showToast('✅ บันทึกข้อมูลสำเร็จ!');
+                    showToast('✅ บันทึกสำเร็จ!');
                     if(e.target.id === 'createForm') { e.target.reset(); switchTab('active'); }
                     if(e.target.id === 'closeForm') { closeModal(); fetchData(); }
                 } else {
-                    showToast('❌ Error: ' + JSON.stringify(res));
+                    showError('Server Error: ' + JSON.stringify(res));
                 }
             })
-            .catch(err => showToast('❌ Connection Failed'))
-            .finally(() => {
-                btn.innerText = originalText;
-                btn.disabled = false;
-            });
+            .catch(err => showError('Connection Error: ' + err.message))
+            .finally(() => { btn.innerText = originalText; btn.disabled = false; });
         }
 
-        // Init
         if(scriptURL && !scriptURL.includes('HERE')) fetchData();
-
     </script>
 </body>
 </html>
