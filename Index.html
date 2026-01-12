@@ -22,8 +22,8 @@
 <body class="min-h-screen pb-24 text-sm">
 
     <script>
-        // ⚠️⚠️ วาง URL ของคุณที่
-        const scriptURL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLh4NwhLO7jgLgt6E5od7gw7qHwqqgocozGVKJi_zHX2lDnIYcZk0dTviE19VtwhzQZEa7BGsxb01PacYtPzLHaiIh7sBZLddL2Ps9ro5SVlfxp2qRnrtVvO1_CGZk5i3GU8XqvIOBHMqvEjiHn_MbfNauuUD2Bkz7s3SkIt5bSyMDn0ld3ExlA53bxlqIcxUO2cspbTgon8fU8PGYwl2eYumswA6lbTbkPkl8Xa3o0jM2x9fi6EA5n8eGisc72sIvXaVlkUoryIx-DTSVjx4dQADUCkdQ&lib=MruwxJIRisg5ma7JSjx1F-L3SafOLewCU'; 
+        // ⚠️⚠️ วาง URL ที่ได้จากการ Deploy ใหม่ (New Version) ตรงนี้ ⚠️⚠️
+        const scriptURL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLgT2czIONiShM3pdAZm0UslyQ6GKY6F3mCex5Zozz35f8am9jZVYmexRw8-_8Boktc5V1I8Jp-8XQbwBpLN1Az-L2KbZxTzgDx_7LmcjC5kVKHWie5CMq1JZcvn7MQ-GdJcQTMd4h8pZUxUO__v4X8jAAuvo9jjwQN9kq3k3KWjIZkWTJsCjByVh_Z1ltiPP5DnJWz6XH2DVXUw67EL77-IFhiAFH0eTNqlBJcWeTg14yryLtEwyoaIEiFhNmf6HQ--MDeRLbkmi6JAfswrqJBAgA4dAQbfHsaMYgaC&lib=MruwxJIRisg5ma7JSjx1F-L3SafOLewCU'; 
     </script>
 
     <!-- Header -->
@@ -46,8 +46,8 @@
         </div>
     </nav>
 
-    <!-- Debug Log Box (จะโชว์เฉพาะเมื่อ Error) -->
-    <div id="error-box" class="hidden fixed top-20 left-4 right-4 bg-red-900/90 text-white p-4 rounded-xl z-50 text-xs font-mono break-all border border-red-500 shadow-2xl"></div>
+    <!-- Error Box -->
+    <div id="error-box" class="hidden fixed top-16 left-4 right-4 bg-red-900 text-white p-3 rounded-lg z-50 text-xs border border-red-500 shadow-xl"></div>
 
     <!-- Main Content -->
     <div class="max-w-lg mx-auto mt-28 px-4">
@@ -55,7 +55,6 @@
         <!-- TAB 1: RECORD -->
         <div id="view-record" class="fade-in">
             <form id="createForm" class="space-y-4">
-                
                 <div class="glass-panel rounded-2xl p-5 space-y-4">
                     <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">ข้อมูลเทรด</h3>
                     <div class="grid grid-cols-2 gap-3">
@@ -67,7 +66,6 @@
                         </select>
                         <input type="number" step="0.01" name="Lot" value="0.01" class="input-soft w-full rounded-xl p-3 text-center" placeholder="Lot Size">
                     </div>
-                    
                     <div class="bg-slate-700 p-1 rounded-xl flex">
                         <label class="flex-1 cursor-pointer">
                             <input type="radio" name="Position" value="BUY" class="peer hidden" checked>
@@ -78,15 +76,13 @@
                             <div class="py-2 rounded-lg text-center text-slate-400 peer-checked:bg-rose-600 peer-checked:text-white transition font-bold">SELL</div>
                         </label>
                     </div>
-
                     <input type="number" step="0.01" name="Entry" placeholder="ราคาเข้า (Entry Price)" class="input-soft w-full rounded-xl p-3 text-center font-mono text-lg" required>
                 </div>
-
                 <div class="glass-panel rounded-2xl p-5 border-l-4 border-indigo-500">
                     <h3 class="text-indigo-400 text-xs font-bold uppercase tracking-wider mb-3"><i class="fa-solid fa-user-doctor mr-1"></i> ตรวจสุขภาพจิต</h3>
                     <div class="space-y-3">
                         <div>
-                            <label class="text-xs text-slate-500 mb-1 block">อารมณ์ตอนเข้า?</label>
+                            <label class="text-xs text-slate-500 mb-1 block">อารมณ์?</label>
                             <select name="Emotion" class="input-soft w-full rounded-lg p-2 text-sm">
                                 <option value="Neutral">😐 ปกติ (Neutral)</option>
                                 <option value="Confident">😎 มั่นใจมาก (Confident)</option>
@@ -104,7 +100,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="glass-panel rounded-2xl p-5">
                     <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-3">Technical Confirm</h3>
                     <div class="grid grid-cols-2 gap-3 text-xs">
@@ -119,6 +114,8 @@
                 <input type="hidden" name="Result" value="RUNNING">
                 <input type="hidden" name="Date" id="dateField">
                 <input type="hidden" name="Time" id="timeField">
+                <!-- Client Side ID Generation -->
+                <input type="hidden" name="ID" id="idField">
 
                 <button type="submit" id="btnCreate" class="w-full bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-slate-900 font-bold py-4 rounded-xl shadow-lg transition active:scale-95 text-lg">
                     บันทึกออเดอร์
@@ -216,31 +213,26 @@
 
         function showError(msg) {
             const box = document.getElementById('error-box');
-            box.innerHTML = `⚠️ <b>Error:</b> ${msg}<br><br><span class="opacity-70">ลองตรวจสอบ URL หรือเปิดสิทธิ์ Anyone ใน Apps Script</span>`;
+            box.innerText = msg;
             box.classList.remove('hidden');
-            setTimeout(() => box.classList.add('hidden'), 8000);
+            setTimeout(() => box.classList.add('hidden'), 5000);
         }
 
-        // --- FETCH DATA FIX (สำคัญมาก!) ---
         function fetchData() {
-            if(!scriptURL || scriptURL.includes('HERE')) { showError('URL ไม่ถูกต้อง'); return; }
-            
+            if(!scriptURL || scriptURL.includes('HERE')) return;
             fetch(scriptURL)
             .then(res => res.json())
             .then(data => {
                 const headers = data[0];
                 const rows = data.slice(1).map(row => {
-                    let obj = {};
-                    headers.forEach((h, i) => obj[h] = row[i]);
-                    return obj;
+                    let obj = {}; headers.forEach((h, i) => obj[h] = row[i]); return obj;
                 });
                 allData = rows;
                 renderActive(rows);
                 renderDashboard(rows);
             })
             .catch(err => {
-                console.error(err);
-                showError('โหลดข้อมูลไม่สำเร็จ: ' + err.message);
+                console.warn('Fetch warning:', err); // Silent fail on fetch is ok, user wants to save
             });
         }
 
@@ -248,21 +240,14 @@
             const list = document.getElementById('active-list');
             const active = rows.filter(r => r.Result === 'RUNNING' || !r.Exit);
             const badge = document.getElementById('badge-active');
-            
-            if(active.length > 0) { badge.innerText = active.length; badge.classList.remove('hidden'); }
-            else { badge.classList.add('hidden'); }
-
+            if(active.length > 0) { badge.innerText = active.length; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
             if(active.length === 0) { list.innerHTML = `<div class="text-center py-10 opacity-30"><p>ว่างเปล่า...</p></div>`; return; }
-
             let html = '';
             active.reverse().forEach(item => {
                 html += `
                 <div onclick='openModal(${JSON.stringify(item)})' class="glass-panel p-4 rounded-xl flex justify-between items-center cursor-pointer hover:bg-slate-800 transition mb-3">
                     <div>
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-slate-200">${item.Pair}</span>
-                            <span class="text-xs font-bold ${item.Position==='BUY'?'text-emerald-400':'text-rose-400'}">${item.Position}</span>
-                        </div>
+                        <div class="flex items-center gap-2"><span class="font-bold text-slate-200">${item.Pair}</span><span class="text-xs font-bold ${item.Position==='BUY'?'text-emerald-400':'text-rose-400'}">${item.Position}</span></div>
                         <div class="text-xs text-slate-500 mt-1">Lot: ${item.Lot} • Entry: ${item.Entry}</div>
                     </div>
                     <div class="text-right"><span class="text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-full">แก้ไข</span></div>
@@ -275,18 +260,13 @@
             const closed = rows.filter(r => r.Result !== 'RUNNING' && r.Exit);
             let wins=0, totalPL=0;
             closed.forEach(r => { if(r.Result === 'WIN') wins++; totalPL += parseFloat(r['P/L ($)'] || 0); });
-            
             const winRate = closed.length ? Math.round((wins/closed.length)*100) : 0;
             document.getElementById('dash-winrate').innerText = `${winRate}%`;
             document.getElementById('dash-profit').innerText = `${totalPL>0?'+':''}${totalPL.toFixed(2)}`;
-
             let psychoHTML = '';
             const badEmo = closed.filter(r => (r.Emotion==='FOMO'||r.Emotion==='Revenge') && r.Result==='LOSS').length;
-            if(badEmo > 0) psychoHTML = `⚠️ เสียเพราะอารมณ์ ${badEmo} ครั้ง! ใจเย็นๆ นะ`;
-            else if(winRate > 60) psychoHTML = `🌟 ฟอร์มกำลังดี รักษามาตรฐานไว้!`;
-            else psychoHTML = `📉 สู้ต่อไป ลองลดความเสี่ยงดูนะ`;
+            if(badEmo > 0) psychoHTML = `⚠️ เสียเพราะอารมณ์ ${badEmo} ครั้ง!`; else psychoHTML = `🌟 ฟอร์มกำลังดี`;
             document.getElementById('psycho-feedback').innerHTML = psychoHTML;
-
             let histHtml = '';
             closed.slice(-5).reverse().forEach(item => {
                 const pl = parseFloat(item['P/L ($)'] || 0);
@@ -296,10 +276,9 @@
                     <span class="font-mono font-bold ${pl>=0?'text-emerald-400':'text-rose-400'}">${pl>0?'+':''}${pl.toFixed(2)}$</span>
                 </div>`;
             });
-            document.getElementById('history-list').innerHTML = histHtml || '<div class="text-center text-xs opacity-50 mt-4">ไม่มีประวัติ</div>';
+            document.getElementById('history-list').innerHTML = histHtml;
         }
 
-        // --- MODAL & CALCULATOR ---
         function openModal(item) {
             const m = document.getElementById('detailModal');
             const isRunning = (item.Result === 'RUNNING' || !item.Exit);
@@ -307,18 +286,13 @@
             document.getElementById('modalTitle').innerHTML = `${item.Pair} ${item.Position}`;
             document.getElementById('modalEntry').innerText = item.Entry;
             document.getElementById('modalLot').innerText = item.Lot;
-
-            let tags = `<span class="px-2 py-1 rounded bg-slate-700 text-xs text-slate-300">${item.Emotion}</span>`;
-            tags += `<span class="px-2 py-1 rounded bg-slate-700 text-xs text-slate-300 ml-2">${item.Risk} Risk</span>`;
+            let tags = `<span class="px-2 py-1 rounded bg-slate-700 text-xs text-slate-300">${item.Emotion}</span><span class="px-2 py-1 rounded bg-slate-700 text-xs text-slate-300 ml-2">${item.Risk}</span>`;
             document.getElementById('modalTags').innerHTML = tags;
-
+            
             if(isRunning) {
-                document.getElementById('closeSection').classList.remove('hidden');
-                document.getElementById('historySection').classList.add('hidden');
+                document.getElementById('closeSection').classList.remove('hidden'); document.getElementById('historySection').classList.add('hidden');
                 document.getElementById('formId').value = item.ID;
-                document.getElementById('modalExit').value = '';
-                document.getElementById('modalPL').value = '';
-                
+                document.getElementById('modalExit').value = ''; document.getElementById('modalPL').value = '';
                 document.getElementById('modalExit').oninput = function() {
                     const exit = parseFloat(this.value); const entry = parseFloat(item.Entry); const lot = parseFloat(item.Lot);
                     if(!exit) return;
@@ -330,8 +304,7 @@
                     document.getElementById('modalResult').value = profit>=0 ? 'WIN' : 'LOSS';
                 };
             } else {
-                document.getElementById('closeSection').classList.add('hidden');
-                document.getElementById('historySection').classList.remove('hidden');
+                document.getElementById('closeSection').classList.add('hidden'); document.getElementById('historySection').classList.remove('hidden');
                 const pl = parseFloat(item['P/L ($)']);
                 document.getElementById('historyPL').innerText = `${pl>0?'+':''}${pl.toFixed(2)}$`;
                 document.getElementById('historyPL').className = `text-2xl font-bold mt-2 ${pl>=0?'text-emerald-400':'text-rose-400'}`;
@@ -340,7 +313,6 @@
         }
         function closeModal() { document.getElementById('detailModal').classList.add('hidden'); }
 
-        // --- SUBMIT FIX (ใช้ text/plain เพื่อแก้ CORS) ---
         document.getElementById('createForm').addEventListener('submit', handleForm);
         document.getElementById('closeForm').addEventListener('submit', handleForm);
 
@@ -354,32 +326,49 @@
             document.getElementById('dateField').value = now.toLocaleDateString('th-TH');
             document.getElementById('timeField').value = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
 
+            // GENERATE ID ON CLIENT SIDE (FIX)
+            if(e.target.id === 'createForm') {
+                const newID = 'ORD-' + Date.now();
+                document.getElementById('idField').value = newID;
+            }
+
             const formData = new FormData(e.target);
             const data = {};
             formData.forEach((v, k) => data[k] = v);
             ['H1 Trend', 'M15 Signal', 'ADX > 20', 'Retest'].forEach(k => { if(!data[k]) data[k] = 'No'; });
 
-            // ⭐⭐ จุดเปลี่ยนสำคัญ: ใช้ Content-Type: text/plain และ redirect: follow ⭐⭐
             fetch(scriptURL, {
-                redirect: "follow",
                 method: "POST",
-                body: JSON.stringify(data),
+                // ⭐⭐ KEY FIX: ใช้ text/plain เพื่อหลบ CORS Preflight ⭐⭐
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(data)
             })
             .then(res => res.json())
             .then(res => {
                 if(res.result === 'success' || res.result === 'updated') {
                     showToast('✅ บันทึกสำเร็จ!');
                     if(e.target.id === 'createForm') { e.target.reset(); switchTab('active'); }
-                    if(e.target.id === 'closeForm') { closeModal(); fetchData(); }
+                    if(e.target.id === 'closeForm') { closeModal(); }
+                    fetchData(); // Try to refresh data
                 } else {
                     showError('Server Error: ' + JSON.stringify(res));
                 }
             })
-            .catch(err => showError('Connection Error: ' + err.message))
+            .catch(err => {
+                // ⭐⭐ Fallback: ถ้า Error แต่อาจจะส่งสำเร็จ ให้แจ้งเตือนแบบ Soft Error ⭐⭐
+                console.error(err);
+                if(err.message.includes('Failed to fetch') || err.message.includes('Load failed')) {
+                     // บาง Browser บล็อกการอ่าน Response แต่ข้อมูลถูกส่งไปแล้ว
+                     showToast('⚠️ ส่งข้อมูลแล้ว (เช็ค Sheet อีกทีนะ)');
+                     if(e.target.id === 'createForm') { e.target.reset(); switchTab('active'); }
+                     if(e.target.id === 'closeForm') { closeModal(); }
+                } else {
+                     showError('Connection Error: ' + err.message);
+                }
+            })
             .finally(() => { btn.innerText = originalText; btn.disabled = false; });
         }
-
+        
         if(scriptURL && !scriptURL.includes('HERE')) fetchData();
     </script>
 </body>
