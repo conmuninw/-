@@ -9,31 +9,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #cbd5e1; }
-        .glass-panel { background: #1e293b; border: 1px solid #334155; }
-        .input-soft { background-color: #334155; border: 1px solid #475569; color: #f1f5f9; }
-        .input-soft:focus { border-color: #2dd4bf; outline: none; }
+        .glass-panel { background: #1e293b; border: 1px solid #334155; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .input-soft { background-color: #334155; border: 1px solid #475569; color: #f1f5f9; transition: all 0.2s; }
+        .input-soft:focus { border-color: #2dd4bf; outline: none; background-color: #1e293b; }
         .accent-teal { color: #2dd4bf; }
-        .tab-btn { opacity: 0.6; border-bottom: 2px solid transparent; transition: 0.3s; }
-        .tab-btn.active { opacity: 1; border-color: #2dd4bf; color: #2dd4bf; font-weight: bold; }
-        .hidden { display: none; }
-        .fade-in { animation: fadeIn 0.3s; }
+        .tab-btn { transition: all 0.3s; border-bottom: 2px solid transparent; opacity: 0.6; }
+        .tab-btn.active { border-color: #2dd4bf; color: #2dd4bf; opacity: 1; font-weight: 600; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="min-h-screen pb-24 text-sm">
 
     <script>
-        // ⚠️⚠️ วาง URL ใหม่ (ที่ลงท้ายด้วย /exec) ตรงนี้ ⚠️⚠️
-        const scriptURL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjjazphb-Br5Xk8WmdDzeODdAzDwRHJceq99O99P9swBzukG8L_WDlDK64Viqy8QuqjbKEikTN7Bl-5micpVycxcWxnTupwGb2N1rguLO4bDsCu_Oo9F_Ex1D7okQ5Fo179G_2fbPWHp_28lpcHxXyooLXf8Ucg8ra5nRRPwvrlzdYxpMkpCUW2tuhOy807Wzo3-jWDqnGSyxzwehmDPtGOTvQvLYLy2BlkN6sV6Cp07ynD5NhPGTDtGBOzlTADbfOdJeUKa1UtOvk-TnPM76sVAe_gRGKQtIP6Fr0Z&lib=MruwxJIRisg5ma7JSjx1F-L3SafOLewCU'; 
+        // ⚠️⚠️ วาง URL ใหม่ (ลงท้าย /exec) ตรงนี้ ⚠️⚠️
+        const scriptURL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLiZsY66QpPx07Jm1iNA_2NEBm3JHwmXm1S1f2UddjZV36dGX2D3WSvGF0Wvw2jLO3Xj7SqAcBueFaP4cDyMVOS40u3cs3cqIx3HpFkfBtgS_O6IqYd-Zcsfe0CpkGGbyQ--lbN8SBsMYcufBYLOZzcYiqk2m3BmTO1f0CbN_5e_7cMmwye2J5i4616tVWEajoEvTqvl0GddrMDA27Ilb8D9NaMKmySv5uCPQQt08RNe79vr4d4U_A-Qw8mZRTNpiHQPchJZEz1d4hczIVtihZg53k0-ZIKkhhLBV4JX&lib=MruwxJIRisg5ma7JSjx1F-L3SafOLewCU'; 
     </script>
 
-    <!-- Navbar -->
-    <nav class="fixed top-0 w-full z-40 bg-[#0f172a]/95 border-b border-slate-700 backdrop-blur">
+    <!-- iframe ล่องหน (พระเอกของเรา) -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { formSubmitCallback(); }"></iframe>
+
+    <!-- Header -->
+    <nav class="fixed top-0 w-full z-40 bg-[#0f172a]/95 backdrop-blur border-b border-slate-700">
         <div class="max-w-lg mx-auto px-4 h-14 flex justify-between items-center">
             <div class="flex items-center gap-2 text-lg font-bold text-slate-200">
                 <i class="fa-solid fa-brain accent-teal"></i> PsychoTrade
             </div>
-            <button onclick="fetchData()" class="w-8 h-8 rounded-full bg-slate-800 flex justify-center items-center hover:bg-slate-700">
+            <button onclick="window.location.reload()" class="w-8 h-8 rounded-full bg-slate-800 flex justify-center items-center hover:bg-slate-700">
                 <i class="fa-solid fa-rotate text-xs"></i>
             </button>
         </div>
@@ -46,16 +48,19 @@
         </div>
     </nav>
 
-    <!-- Error/Debug Box -->
+    <!-- Debug Box -->
     <div id="debug-log" class="hidden fixed top-20 left-4 right-4 bg-red-900/90 text-white p-3 rounded-lg z-50 text-xs break-all border border-red-500"></div>
 
     <div class="max-w-lg mx-auto mt-28 px-4">
 
         <!-- TAB 1: RECORD -->
         <div id="view-record" class="fade-in">
-            <form id="createForm" class="space-y-4">
+            <!-- เปลี่ยนเป็น Form ธรรมดา ส่งไป Iframe -->
+            <form id="createForm" target="hidden_iframe" method="POST" class="space-y-4" onsubmit="submitted=true;">
+                <input type="hidden" name="action" value="create">
+                
                 <div class="glass-panel rounded-2xl p-5 space-y-4">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">ข้อมูลเทรด</h3>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">ข้อมูลเทรด</h3>
                     <div class="grid grid-cols-2 gap-3">
                         <select name="Pair" class="input-soft w-full rounded-xl p-3">
                             <option value="XAUUSD">XAUUSD (ทองคำ)</option>
@@ -83,18 +88,18 @@
                     <div>
                         <label class="text-xs text-slate-500 block mb-1">อารมณ์?</label>
                         <select name="Emotion" class="input-soft w-full rounded-lg p-2 text-sm">
-                            <option value="Neutral">😐 ปกติ (Neutral)</option>
-                            <option value="Confident">😎 มั่นใจ (Confident)</option>
-                            <option value="FOMO">😱 กลัวตกรถ (FOMO)</option>
-                            <option value="Revenge">😡 หัวร้อน (Revenge)</option>
+                            <option value="Neutral">😐 ปกติ</option>
+                            <option value="Confident">😎 มั่นใจ</option>
+                            <option value="FOMO">😱 กลัวตกรถ</option>
+                            <option value="Revenge">😡 หัวร้อน</option>
                         </select>
                     </div>
                     <div>
                         <label class="text-xs text-slate-500 block mb-1">ความเสี่ยง?</label>
                         <select name="Risk" class="input-soft w-full rounded-lg p-2 text-sm">
-                            <option value="Low">🟢 ต่ำ (Low)</option>
-                            <option value="Medium">🟡 ปานกลาง (Medium)</option>
-                            <option value="High">🔴 สูง (High)</option>
+                            <option value="Low">🟢 ต่ำ</option>
+                            <option value="Medium">🟡 ปานกลาง</option>
+                            <option value="High">🔴 สูง</option>
                         </select>
                     </div>
                 </div>
@@ -102,6 +107,9 @@
                 <div class="glass-panel rounded-2xl p-5">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Checklist</h3>
                     <div class="grid grid-cols-2 gap-2 text-xs">
+                        <!-- Hidden inputs for unchecked boxes -->
+                        <input type="hidden" name="H1 Trend" value="No"><input type="hidden" name="M15 Signal" value="No"><input type="hidden" name="ADX > 20" value="No"><input type="hidden" name="Retest" value="No">
+                        
                         <label class="flex items-center p-2 rounded hover:bg-slate-700"><input type="checkbox" name="H1 Trend" value="Yes" class="mr-2"> H1 Trend</label>
                         <label class="flex items-center p-2 rounded hover:bg-slate-700"><input type="checkbox" name="M15 Signal" value="Yes" class="mr-2"> M15 Signal</label>
                         <label class="flex items-center p-2 rounded hover:bg-slate-700"><input type="checkbox" name="ADX > 20" value="Yes" class="mr-2"> ADX > 20</label>
@@ -109,13 +117,12 @@
                     </div>
                 </div>
 
-                <input type="hidden" name="action" value="create">
                 <input type="hidden" name="Result" value="RUNNING">
-                <input type="hidden" name="ID" id="idField">
-                <input type="hidden" name="Date" id="dateField">
-                <input type="hidden" name="Time" id="timeField">
+                <input type="hidden" name="ID" id="idField_Create">
+                <input type="hidden" name="Date" id="dateField_Create">
+                <input type="hidden" name="Time" id="timeField_Create">
 
-                <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 font-bold text-slate-900 shadow-lg text-lg active:scale-95 transition">
+                <button type="submit" id="btnCreate" class="w-full py-4 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 font-bold text-slate-900 shadow-lg text-lg active:scale-95 transition">
                     บันทึกออเดอร์
                 </button>
             </form>
@@ -160,7 +167,7 @@
                 </div>
                 <div id="modalTags" class="flex flex-wrap gap-2 justify-center"></div>
 
-                <form id="closeForm" class="space-y-4 pt-4 border-t border-slate-700">
+                <form id="closeForm" target="hidden_iframe" method="POST" class="space-y-4 pt-4 border-t border-slate-700" onsubmit="submitted=true;">
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="id" id="formId">
                     
@@ -175,7 +182,7 @@
                         <div class="mt-3">
                             <textarea name="Review" class="input-soft w-full rounded-xl p-2 text-sm h-20" placeholder="บทเรียน..."></textarea>
                         </div>
-                        <button type="submit" class="w-full mt-2 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl">ยืนยันปิด</button>
+                        <button type="submit" id="btnCloseConfirm" class="w-full mt-2 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl">ยืนยันปิด</button>
                     </div>
                     <div id="historySection" class="hidden text-center">
                         <p class="text-sm text-slate-400">ปิดแล้ว</p>
@@ -192,7 +199,66 @@
     </div>
 
     <script>
-        // --- LOGIC ---
+        // --- CORE SETTINGS ---
+        let submitted = false; // ตัวแปรเช็คสถานะการส่ง
+
+        // ตั้งค่า URL ของ Forms
+        function setFormActions() {
+            if(!scriptURL || scriptURL.includes('HERE')) {
+                document.getElementById('debug-log').innerText = "⚠️ กรุณาใส่ URL ของ Apps Script ก่อน";
+                document.getElementById('debug-log').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('createForm').action = scriptURL;
+            document.getElementById('closeForm').action = scriptURL;
+        }
+
+        // --- CALLBACK เมื่อส่งข้อมูลเสร็จ ---
+        // ฟังก์ชันนี้จะทำงานเมื่อ Iframe โหลดเสร็จ (แปลว่าส่งข้อมูลสำเร็จ)
+        function formSubmitCallback() {
+            if(submitted) {
+                showToast('✅ บันทึกสำเร็จ!');
+                
+                // รีเซ็ตฟอร์ม
+                document.getElementById('createForm').reset();
+                if(!document.getElementById('detailModal').classList.contains('hidden')) {
+                     closeModal();
+                }
+                
+                // สลับไปหน้า Active (ถ้ากดสร้างใหม่)
+                const activeTab = document.querySelector('.tab-btn.active').id;
+                if(activeTab === 'tab-record') {
+                    switchTab('active');
+                }
+
+                submitted = false; // รีเซ็ตสถานะ
+                
+                // โหลดข้อมูลใหม่ (ดีเลย์นิดนึงให้ Sheet อัปเดตทัน)
+                setTimeout(fetchData, 1500);
+            }
+        }
+
+        // --- PREPARE DATA BEFORE SUBMIT ---
+        document.getElementById('createForm').addEventListener('submit', function() {
+            const now = new Date();
+            document.getElementById('dateField_Create').value = now.toLocaleDateString('th-TH');
+            document.getElementById('timeField_Create').value = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('idField_Create').value = 'ORD-' + Date.now();
+            
+            // เปลี่ยนปุ่มเป็น Loading
+            const btn = document.getElementById('btnCreate');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+            // คืนค่าปุ่มหลัง 3 วิ (กันค้าง)
+            setTimeout(() => { btn.innerText = 'บันทึกออเดอร์'; }, 3000);
+        });
+
+        document.getElementById('closeForm').addEventListener('submit', function() {
+             const btn = document.getElementById('btnCloseConfirm');
+             btn.innerText = 'Saving...';
+             setTimeout(() => { btn.innerText = 'ยืนยันปิด'; }, 3000);
+        });
+
+        // --- UI LOGIC (เหมือนเดิม) ---
         let allData = [];
 
         function switchTab(tab) {
@@ -210,9 +276,9 @@
             setTimeout(() => t.classList.add('-translate-y-20', 'opacity-0'), 3000);
         }
 
-        // --- FETCH ENGINE (The Fix) ---
         function fetchData() {
             if(!scriptURL || scriptURL.includes('HERE')) return;
+            // Fetch GET มักจะไม่มีปัญหา CORS
             fetch(scriptURL)
             .then(res => res.json())
             .then(data => {
@@ -224,18 +290,15 @@
                 renderActive(rows);
                 renderDashboard(rows);
             })
-            .catch(e => console.log('Fetch silent fail (normal for initial load)'));
+            .catch(e => console.log('Fetch error (reading):', e));
         }
 
         function renderActive(rows) {
             const list = document.getElementById('active-list');
             const active = rows.filter(r => r.Result === 'RUNNING' || !r.Exit);
             const badge = document.getElementById('badge-active');
-            
             if(active.length > 0) { badge.innerText = active.length; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
-            
             if(active.length === 0) { list.innerHTML = `<div class="text-center py-10 opacity-30"><p>ว่างเปล่า...</p></div>`; return; }
-            
             let html = '';
             active.reverse().forEach(item => {
                 html += `
@@ -255,30 +318,24 @@
             let wins=0, totalPL=0;
             closed.forEach(r => { if(r.Result==='WIN') wins++; totalPL += parseFloat(r['P/L ($)']||0); });
             const winRate = closed.length ? Math.round((wins/closed.length)*100) : 0;
-            
             document.getElementById('dash-winrate').innerText = `${winRate}%`;
-            document.getElementById('dash-winrate').className = `text-3xl font-bold mt-1 ${winRate>=50?'text-emerald-400':'text-rose-400'}`;
             document.getElementById('dash-profit').innerText = `${totalPL>0?'+':''}${totalPL.toFixed(2)}`;
-            document.getElementById('dash-profit').className = `text-3xl font-bold mt-1 ${totalPL>=0?'text-emerald-400':'text-rose-400'}`;
-
-            // Psycho Logic
-            const badEmo = closed.filter(r => (r.Emotion==='FOMO'||r.Emotion==='Revenge') && r.Result==='LOSS').length;
-            const msg = badEmo > 0 ? `⚠️ เสียเพราะอารมณ์ ${badEmo} ครั้ง!` : (winRate>60 ? `🌟 ฟอร์มกำลังดี!` : `📉 สู้ต่อไป`);
-            document.getElementById('psycho-feedback').innerHTML = msg;
-
-            let hHtml = '';
+            let histHtml = '';
             closed.slice(-5).reverse().forEach(item => {
                 const pl = parseFloat(item['P/L ($)']||0);
-                hHtml += `
+                histHtml += `
                 <div onclick='openModal(${JSON.stringify(item)})' class="flex justify-between items-center p-3 border-b border-slate-700/50 hover:bg-slate-800/50 cursor-pointer">
                     <div class="flex items-center gap-2"><span class="font-bold text-slate-300">${item.Pair}</span><span class="text-[10px] text-slate-500">${item.Position}</span></div>
                     <span class="font-mono font-bold ${pl>=0?'text-emerald-400':'text-rose-400'}">${pl>0?'+':''}${pl.toFixed(2)}$</span>
                 </div>`;
             });
-            document.getElementById('history-list').innerHTML = hHtml || '<div class="text-center text-xs opacity-50 mt-4">ไม่มีประวัติ</div>';
+            document.getElementById('history-list').innerHTML = histHtml;
+            // Psycho feedback
+             const badEmo = closed.filter(r => (r.Emotion==='FOMO'||r.Emotion==='Revenge') && r.Result==='LOSS').length;
+             const msg = badEmo > 0 ? `⚠️ เสียเพราะอารมณ์ ${badEmo} ครั้ง!` : (winRate>60 ? `🌟 ฟอร์มกำลังดี!` : `📉 สู้ต่อไป`);
+             document.getElementById('psycho-feedback').innerHTML = msg;
         }
 
-        // --- MODAL ---
         function openModal(item) {
             const m = document.getElementById('detailModal');
             const isRunning = (item.Result === 'RUNNING' || !item.Exit);
@@ -286,14 +343,12 @@
             document.getElementById('modalTitle').innerHTML = `${item.Pair} ${item.Position}`;
             document.getElementById('modalEntry').innerText = item.Entry;
             document.getElementById('modalLot').innerText = item.Lot;
-            document.getElementById('modalTags').innerHTML = `<span class="bg-slate-700 px-2 rounded text-xs text-slate-300">${item.Emotion}</span><span class="bg-slate-700 px-2 rounded text-xs text-slate-300">${item.Risk}</span>`;
+            document.getElementById('modalTags').innerHTML = `<span class="bg-slate-700 px-2 rounded text-xs text-slate-300">${item.Emotion}</span><span class="bg-slate-700 px-2 rounded text-xs text-slate-300 ml-2">${item.Risk}</span>`;
 
             if(isRunning) {
-                document.getElementById('closeSection').classList.remove('hidden');
-                document.getElementById('historySection').classList.add('hidden');
+                document.getElementById('closeSection').classList.remove('hidden'); document.getElementById('historySection').classList.add('hidden');
                 document.getElementById('formId').value = item.ID;
-                document.getElementById('modalExit').value = '';
-                document.getElementById('modalPL').value = '';
+                document.getElementById('modalExit').value = ''; document.getElementById('modalPL').value = '';
                 document.getElementById('modalExit').oninput = function() {
                     const ex = parseFloat(this.value); const en = parseFloat(item.Entry); const lot = parseFloat(item.Lot);
                     if(!ex) return;
@@ -305,8 +360,7 @@
                     document.getElementById('modalResult').value = profit>=0 ? 'WIN' : 'LOSS';
                 };
             } else {
-                document.getElementById('closeSection').classList.add('hidden');
-                document.getElementById('historySection').classList.remove('hidden');
+                document.getElementById('closeSection').classList.add('hidden'); document.getElementById('historySection').classList.remove('hidden');
                 const pl = parseFloat(item['P/L ($)']);
                 document.getElementById('historyPL').innerText = `${pl>0?'+':''}${pl.toFixed(2)}$`;
                 document.getElementById('historyPL').className = `text-2xl font-bold mt-2 ${pl>=0?'text-emerald-400':'text-rose-400'}`;
@@ -315,60 +369,8 @@
         }
         function closeModal() { document.getElementById('detailModal').classList.add('hidden'); }
 
-        // --- SUBMIT HANDLER (TEXT/PLAIN) ---
-        function handleForm(e) {
-            e.preventDefault();
-            const btn = e.target.querySelector('button[type="submit"]');
-            const txt = btn.innerText;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'; btn.disabled = true;
-
-            const now = new Date();
-            document.getElementById('dateField').value = now.toLocaleDateString('th-TH');
-            document.getElementById('timeField').value = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-            if(e.target.id === 'createForm') document.getElementById('idField').value = 'ORD-'+Date.now();
-
-            const formData = new FormData(e.target);
-            const data = {};
-            formData.forEach((v, k) => data[k] = v);
-            ['H1 Trend', 'M15 Signal', 'ADX > 20', 'Retest'].forEach(k => { if(!data[k]) data[k] = 'No'; });
-
-            // ⭐⭐ TEXT/PLAIN SENDING ⭐⭐
-            fetch(scriptURL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify(data)
-            })
-            .then(res => res.json())
-            .then(res => {
-                if(res.result === 'success' || res.result === 'updated') {
-                    showToast('✅ บันทึกสำเร็จ!');
-                    if(e.target.id === 'createForm') { e.target.reset(); switchTab('active'); }
-                    if(e.target.id === 'closeForm') { closeModal(); }
-                    fetchData();
-                } else {
-                    document.getElementById('debug-log').innerText = "Error: " + JSON.stringify(res);
-                    document.getElementById('debug-log').classList.remove('hidden');
-                }
-            })
-            .catch(err => {
-                // If text/plain works, it might not return JSON nicely in some browsers, but data IS saved.
-                console.warn(err);
-                if(err.name === 'SyntaxError') {
-                     showToast('✅ น่าจะบันทึกแล้ว (Syntax Check)');
-                     if(e.target.id === 'createForm') { e.target.reset(); switchTab('active'); }
-                     if(e.target.id === 'closeForm') { closeModal(); }
-                     setTimeout(fetchData, 1000);
-                } else {
-                     document.getElementById('debug-log').innerText = "Conn Error: " + err.message;
-                     document.getElementById('debug-log').classList.remove('hidden');
-                }
-            })
-            .finally(() => { btn.innerText = txt; btn.disabled = false; });
-        }
-
-        document.getElementById('createForm').addEventListener('submit', handleForm);
-        document.getElementById('closeForm').addEventListener('submit', handleForm);
-
+        // INIT
+        setFormActions();
         if(scriptURL && !scriptURL.includes('HERE')) fetchData();
     </script>
 </body>
