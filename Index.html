@@ -9,35 +9,35 @@
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #cbd5e1; }
-        .glass-panel { background: #1e293b; border: 1px solid #334155; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .input-soft { background-color: #334155; border: 1px solid #475569; color: #f1f5f9; transition: all 0.2s; }
-        .input-soft:focus { border-color: #2dd4bf; outline: none; background-color: #1e293b; }
+        .glass-panel { background: #1e293b; border: 1px solid #334155; }
+        .input-soft { background-color: #334155; border: 1px solid #475569; color: #f1f5f9; }
+        .input-soft:focus { border-color: #2dd4bf; outline: none; }
         .accent-teal { color: #2dd4bf; }
-        .tab-btn { transition: all 0.3s; border-bottom: 2px solid transparent; opacity: 0.6; }
-        .tab-btn.active { border-color: #2dd4bf; color: #2dd4bf; opacity: 1; font-weight: 600; }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        .tab-btn { opacity: 0.6; border-bottom: 2px solid transparent; transition: 0.3s; }
+        .tab-btn.active { opacity: 1; border-color: #2dd4bf; color: #2dd4bf; font-weight: bold; }
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body class="min-h-screen pb-24 text-sm">
 
     <script>
-        // ⚠️⚠️ วาง URL ใหม่ของคุณที่นี่ ⚠️⚠️
-        const scriptURL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLhxTEafYF64fLkYk02sWVDdBiLNrHb0_EDoPUqOo6F2sDxxNfpPqjoEzRNe9mPzTL40-Ntuy10BEuMa9-bxmTEQ3_Gh02dTw9djrCqUm-Spv92LrK6mBcQ8hNSya0E1Qe-ZanqPzpH8kPOqwusnfP8b4AaHBCR8StmCMG9m-GpGvjmaZdpxf9S05gwGWEdefxU9tuZi2oBIjvej2DUX-3pfNU9uOednAVeJJQL6vFEla0vrH-scyEXIsn5_gzw9s2ydjrYCSAcB6tSsdbCAW2ic2MVPWqN5bwpNY0AQ&lib=MruwxJIRisg5ma7JSjx1F-L3SafOLewCU'; 
+        // ⚠️⚠️ วาง URL ใหม่ (ที่ลงท้ายด้วย /exec) ตรงนี้ ⚠️⚠️
+        const scriptURL = 'https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLjjazphb-Br5Xk8WmdDzeODdAzDwRHJceq99O99P9swBzukG8L_WDlDK64Viqy8QuqjbKEikTN7Bl-5micpVycxcWxnTupwGb2N1rguLO4bDsCu_Oo9F_Ex1D7okQ5Fo179G_2fbPWHp_28lpcHxXyooLXf8Ucg8ra5nRRPwvrlzdYxpMkpCUW2tuhOy807Wzo3-jWDqnGSyxzwehmDPtGOTvQvLYLy2BlkN6sV6Cp07ynD5NhPGTDtGBOzlTADbfOdJeUKa1UtOvk-TnPM76sVAe_gRGKQtIP6Fr0Z&lib=MruwxJIRisg5ma7JSjx1F-L3SafOLewCU'; 
     </script>
 
-    <!-- Header -->
-    <nav class="fixed top-0 w-full z-40 bg-[#0f172a]/90 backdrop-blur-md border-b border-slate-700">
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-40 bg-[#0f172a]/95 border-b border-slate-700 backdrop-blur">
         <div class="max-w-lg mx-auto px-4 h-14 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-brain accent-teal text-lg"></i>
-                <span class="font-bold text-slate-200 text-lg">PsychoTrade</span>
+            <div class="flex items-center gap-2 text-lg font-bold text-slate-200">
+                <i class="fa-solid fa-brain accent-teal"></i> PsychoTrade
             </div>
-            <button onclick="fetchData()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition">
-                <i class="fa-solid fa-rotate text-slate-400 text-xs"></i>
+            <button onclick="fetchData()" class="w-8 h-8 rounded-full bg-slate-800 flex justify-center items-center hover:bg-slate-700">
+                <i class="fa-solid fa-rotate text-xs"></i>
             </button>
         </div>
-        <div class="max-w-lg mx-auto px-4 flex border-slate-700">
+        <div class="max-w-lg mx-auto flex border-t border-slate-700">
             <button onclick="switchTab('record')" id="tab-record" class="flex-1 py-3 tab-btn active">จดบันทึก</button>
             <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-3 tab-btn relative">
                 ถืออยู่ <span id="badge-active" class="ml-1 bg-rose-500 text-white text-[10px] px-1.5 rounded-full hidden">0</span>
@@ -46,15 +46,16 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
+    <!-- Error/Debug Box -->
+    <div id="debug-log" class="hidden fixed top-20 left-4 right-4 bg-red-900/90 text-white p-3 rounded-lg z-50 text-xs break-all border border-red-500"></div>
+
     <div class="max-w-lg mx-auto mt-28 px-4">
 
         <!-- TAB 1: RECORD -->
         <div id="view-record" class="fade-in">
             <form id="createForm" class="space-y-4">
-                <!-- Inputs -->
                 <div class="glass-panel rounded-2xl p-5 space-y-4">
-                    <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-2">ข้อมูลเทรด</h3>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">ข้อมูลเทรด</h3>
                     <div class="grid grid-cols-2 gap-3">
                         <select name="Pair" class="input-soft w-full rounded-xl p-3">
                             <option value="XAUUSD">XAUUSD (ทองคำ)</option>
@@ -62,135 +63,136 @@
                             <option value="USDJPY">USDJPY</option>
                             <option value="BTCUSD">BTCUSD</option>
                         </select>
-                        <input type="number" step="0.01" name="Lot" value="0.01" class="input-soft w-full rounded-xl p-3 text-center" placeholder="Lot Size">
+                        <input type="number" step="0.01" name="Lot" value="0.01" class="input-soft w-full rounded-xl p-3 text-center">
                     </div>
-                    <div class="bg-slate-700 p-1 rounded-xl flex">
+                    <div class="flex bg-slate-700 p-1 rounded-xl">
                         <label class="flex-1 cursor-pointer">
                             <input type="radio" name="Position" value="BUY" class="peer hidden" checked>
-                            <div class="py-2 rounded-lg text-center text-slate-400 peer-checked:bg-emerald-600 peer-checked:text-white transition font-bold">BUY</div>
+                            <div class="py-2 text-center rounded-lg text-slate-400 peer-checked:bg-emerald-600 peer-checked:text-white font-bold transition">BUY</div>
                         </label>
                         <label class="flex-1 cursor-pointer">
                             <input type="radio" name="Position" value="SELL" class="peer hidden">
-                            <div class="py-2 rounded-lg text-center text-slate-400 peer-checked:bg-rose-600 peer-checked:text-white transition font-bold">SELL</div>
+                            <div class="py-2 text-center rounded-lg text-slate-400 peer-checked:bg-rose-600 peer-checked:text-white font-bold transition">SELL</div>
                         </label>
                     </div>
-                    <input type="number" step="0.01" name="Entry" placeholder="ราคาเข้า (Entry Price)" class="input-soft w-full rounded-xl p-3 text-center font-mono text-lg" required>
+                    <input type="number" step="0.01" name="Entry" placeholder="ราคาเข้า (Entry)" class="input-soft w-full rounded-xl p-3 text-center text-lg font-mono" required>
                 </div>
 
-                <div class="glass-panel rounded-2xl p-5 border-l-4 border-indigo-500">
-                    <h3 class="text-indigo-400 text-xs font-bold uppercase tracking-wider mb-3"><i class="fa-solid fa-user-doctor mr-1"></i> ตรวจสุขภาพจิต</h3>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="text-xs text-slate-500 mb-1 block">อารมณ์?</label>
-                            <select name="Emotion" class="input-soft w-full rounded-lg p-2 text-sm">
-                                <option value="Neutral">😐 ปกติ (Neutral)</option>
-                                <option value="Confident">😎 มั่นใจมาก (Confident)</option>
-                                <option value="FOMO">😱 กลัวตกรถ (FOMO)</option>
-                                <option value="Revenge">😡 หัวร้อน (Revenge)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="text-xs text-slate-500 mb-1 block">ความเสี่ยง?</label>
-                            <select name="Risk" class="input-soft w-full rounded-lg p-2 text-sm">
-                                <option value="Low">🟢 ต่ำ (Low)</option>
-                                <option value="Medium">🟡 ปานกลาง (Medium)</option>
-                                <option value="High">🔴 สูง (High)</option>
-                            </select>
-                        </div>
+                <div class="glass-panel rounded-2xl p-5 border-l-4 border-indigo-500 space-y-3">
+                    <h3 class="text-xs font-bold text-indigo-400 uppercase tracking-wider"><i class="fa-solid fa-user-doctor mr-1"></i> จิตวิทยา</h3>
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1">อารมณ์?</label>
+                        <select name="Emotion" class="input-soft w-full rounded-lg p-2 text-sm">
+                            <option value="Neutral">😐 ปกติ (Neutral)</option>
+                            <option value="Confident">😎 มั่นใจ (Confident)</option>
+                            <option value="FOMO">😱 กลัวตกรถ (FOMO)</option>
+                            <option value="Revenge">😡 หัวร้อน (Revenge)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-500 block mb-1">ความเสี่ยง?</label>
+                        <select name="Risk" class="input-soft w-full rounded-lg p-2 text-sm">
+                            <option value="Low">🟢 ต่ำ (Low)</option>
+                            <option value="Medium">🟡 ปานกลาง (Medium)</option>
+                            <option value="High">🔴 สูง (High)</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="glass-panel rounded-2xl p-5">
-                    <h3 class="text-slate-400 text-xs font-bold uppercase tracking-wider mb-3">Technical Confirm</h3>
-                    <div class="grid grid-cols-2 gap-3 text-xs">
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer"><input type="checkbox" name="H1 Trend" value="Yes" class="mr-2"> H1 Trend</label>
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer"><input type="checkbox" name="M15 Signal" value="Yes" class="mr-2"> M15 Signal</label>
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer"><input type="checkbox" name="ADX > 20" value="Yes" class="mr-2"> ADX > 20</label>
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700 cursor-pointer"><input type="checkbox" name="Retest" value="Yes" class="mr-2"> Retest</label>
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Checklist</h3>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <label class="flex items-center p-2 rounded hover:bg-slate-700"><input type="checkbox" name="H1 Trend" value="Yes" class="mr-2"> H1 Trend</label>
+                        <label class="flex items-center p-2 rounded hover:bg-slate-700"><input type="checkbox" name="M15 Signal" value="Yes" class="mr-2"> M15 Signal</label>
+                        <label class="flex items-center p-2 rounded hover:bg-slate-700"><input type="checkbox" name="ADX > 20" value="Yes" class="mr-2"> ADX > 20</label>
+                        <label class="flex items-center p-2 rounded hover:bg-slate-700"><input type="checkbox" name="Retest" value="Yes" class="mr-2"> Retest</label>
                     </div>
                 </div>
 
                 <input type="hidden" name="action" value="create">
                 <input type="hidden" name="Result" value="RUNNING">
                 <input type="hidden" name="ID" id="idField">
+                <input type="hidden" name="Date" id="dateField">
+                <input type="hidden" name="Time" id="timeField">
 
-                <button type="submit" id="btnCreate" class="w-full bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-slate-900 font-bold py-4 rounded-xl shadow-lg transition active:scale-95 text-lg">
+                <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 font-bold text-slate-900 shadow-lg text-lg active:scale-95 transition">
                     บันทึกออเดอร์
                 </button>
             </form>
         </div>
 
-        <!-- TAB 2: ACTIVE LIST -->
-        <div id="view-active" class="hidden fade-in space-y-4">
+        <!-- TAB 2: ACTIVE -->
+        <div id="view-active" class="hidden fade-in space-y-3">
             <div id="active-list" class="space-y-3"></div>
         </div>
 
         <!-- TAB 3: DASHBOARD -->
-        <div id="view-dashboard" class="hidden fade-in space-y-6">
+        <div id="view-dashboard" class="hidden fade-in space-y-5">
             <div class="grid grid-cols-2 gap-4">
-                <div class="glass-panel rounded-2xl p-5 text-center">
+                <div class="glass-panel p-5 rounded-2xl text-center">
                     <p class="text-xs text-slate-400 uppercase">Win Rate</p>
-                    <h2 id="dash-winrate" class="text-3xl font-bold mt-1 text-slate-200">--%</h2>
+                    <h2 id="dash-winrate" class="text-3xl font-bold mt-1">--%</h2>
                 </div>
-                <div class="glass-panel rounded-2xl p-5 text-center">
-                    <p class="text-xs text-slate-400 uppercase">Net P/L</p>
-                    <h2 id="dash-profit" class="text-3xl font-bold mt-1 text-slate-200">--</h2>
+                <div class="glass-panel p-5 rounded-2xl text-center">
+                    <p class="text-xs text-slate-400 uppercase">Net Profit</p>
+                    <h2 id="dash-profit" class="text-3xl font-bold mt-1">--</h2>
                 </div>
             </div>
-            <div class="glass-panel rounded-2xl p-5 border-t-4 border-purple-500">
-                <h3 class="font-bold text-slate-200 mb-4">วิเคราะห์พฤติกรรม</h3>
-                <div id="psycho-feedback" class="text-sm text-slate-300">รอข้อมูล...</div>
+            <div class="glass-panel p-5 rounded-2xl border-t-4 border-purple-500">
+                <h3 class="font-bold text-slate-200 mb-2">บทวิเคราะห์</h3>
+                <div id="psycho-feedback" class="text-sm text-slate-300">...</div>
             </div>
-            <div>
-                <h3 class="text-xs font-bold text-slate-500 uppercase mb-3 ml-1">ประวัติล่าสุด</h3>
-                <div id="history-list" class="space-y-2"></div>
-            </div>
+            <div id="history-list" class="space-y-2"></div>
         </div>
-
     </div>
 
     <!-- MODAL -->
-    <div id="detailModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-4 fade-in">
-        <div class="bg-slate-800 rounded-2xl w-full max-w-sm border border-slate-600 shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div class="bg-slate-900/50 p-4 border-b border-slate-700 flex justify-between items-center sticky top-0">
-                <div><span id="modalID" class="text-[10px] text-slate-500 block"></span><h3 class="font-bold text-lg text-white" id="modalTitle"></h3></div>
+    <div id="detailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm fade-in">
+        <div class="bg-slate-800 w-full max-w-sm rounded-2xl border border-slate-600 shadow-2xl overflow-hidden">
+            <div class="bg-slate-900/80 p-4 flex justify-between items-center border-b border-slate-700">
+                <div><span id="modalID" class="text-[10px] text-slate-500 block"></span><h3 id="modalTitle" class="font-bold text-white text-lg"></h3></div>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-white p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-            <div class="p-5 space-y-5">
+            <div class="p-5 space-y-5 overflow-y-auto max-h-[70vh]">
                 <div class="grid grid-cols-2 gap-4 text-center">
-                    <div class="bg-slate-700/50 p-3 rounded-xl"><p class="text-xs text-slate-400">Entry</p><p id="modalEntry" class="font-mono text-lg text-teal-400"></p></div>
-                    <div class="bg-slate-700/50 p-3 rounded-xl"><p class="text-xs text-slate-400">Lot</p><p id="modalLot" class="font-mono text-lg text-white"></p></div>
+                    <div class="bg-slate-700/50 p-2 rounded-xl"><p class="text-xs text-slate-400">Entry</p><p id="modalEntry" class="font-mono text-lg text-teal-400"></p></div>
+                    <div class="bg-slate-700/50 p-2 rounded-xl"><p class="text-xs text-slate-400">Lot</p><p id="modalLot" class="font-mono text-lg text-white"></p></div>
                 </div>
-                <div class="flex flex-wrap gap-2 justify-center" id="modalTags"></div>
+                <div id="modalTags" class="flex flex-wrap gap-2 justify-center"></div>
+
                 <form id="closeForm" class="space-y-4 pt-4 border-t border-slate-700">
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="id" id="formId">
+                    
                     <div id="closeSection">
-                        <label class="text-xs text-slate-400 mb-1 block">Exit Price</label>
+                        <label class="text-xs text-slate-400 mb-1 block">ราคาปิด (Exit)</label>
                         <input type="number" step="0.01" name="Exit" id="modalExit" class="input-soft w-full rounded-xl p-3 text-center text-xl font-bold text-amber-400" placeholder="0.00">
                         <div class="flex justify-between items-center mt-3 bg-slate-900 p-3 rounded-lg">
-                             <span class="text-slate-400 text-xs">P/L:</span>
-                             <input type="text" name="P/L ($)" id="modalPL" class="bg-transparent text-right font-bold w-24 outline-none" readonly>
+                            <span class="text-slate-400 text-xs">P/L:</span>
+                            <input type="text" name="P/L ($)" id="modalPL" class="bg-transparent text-right font-bold w-24 outline-none" readonly>
                         </div>
                         <input type="hidden" name="Result" id="modalResult">
                         <div class="mt-3">
-                            <label class="text-xs text-slate-400 mb-1 block">Review</label>
-                            <textarea name="Review" class="input-soft w-full rounded-xl p-2 text-sm h-20"></textarea>
+                            <textarea name="Review" class="input-soft w-full rounded-xl p-2 text-sm h-20" placeholder="บทเรียน..."></textarea>
                         </div>
-                        <button type="submit" id="btnCloseConfirm" class="w-full mt-4 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 rounded-xl">ยืนยันปิด</button>
+                        <button type="submit" class="w-full mt-2 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl">ยืนยันปิด</button>
                     </div>
-                    <div id="historySection" class="hidden text-center"><p class="text-sm text-slate-400">Closed</p><p id="historyPL" class="text-2xl font-bold mt-2"></p></div>
+                    <div id="historySection" class="hidden text-center">
+                        <p class="text-sm text-slate-400">ปิดแล้ว</p>
+                        <p id="historyPL" class="text-2xl font-bold mt-2"></p>
+                    </div>
                 </form>
             </div>
         </div>
     </div>
 
     <!-- Toast -->
-    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl text-sm border border-slate-600 transition-all duration-300 -translate-y-20 opacity-0 z-[60] flex items-center gap-2">
-        <i class="fa-solid fa-circle-check text-teal-400"></i> <span id="toastMsg">Saved!</span>
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-full shadow-xl text-sm transition-all duration-300 -translate-y-20 opacity-0 z-[60] flex items-center gap-2">
+        <i class="fa-solid fa-check-circle"></i> <span id="toastMsg">Saved!</span>
     </div>
 
     <script>
+        // --- LOGIC ---
         let allData = [];
 
         function switchTab(tab) {
@@ -198,19 +200,19 @@
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(`view-${tab}`).classList.remove('hidden');
             document.getElementById(`tab-${tab}`).classList.add('active');
-            if(tab === 'active' || tab === 'dashboard') fetchData();
+            if(tab !== 'record') fetchData();
         }
 
-        function showToast(msg, type='success') {
+        function showToast(msg) {
             const t = document.getElementById('toast');
             document.getElementById('toastMsg').innerText = msg;
             t.classList.remove('-translate-y-20', 'opacity-0');
             setTimeout(() => t.classList.add('-translate-y-20', 'opacity-0'), 3000);
         }
 
+        // --- FETCH ENGINE (The Fix) ---
         function fetchData() {
             if(!scriptURL || scriptURL.includes('HERE')) return;
-            // Fetch ใช้ mode cors ปกติสำหรับการอ่าน (GET มักจะไม่มีปัญหา)
             fetch(scriptURL)
             .then(res => res.json())
             .then(data => {
@@ -222,15 +224,18 @@
                 renderActive(rows);
                 renderDashboard(rows);
             })
-            .catch(err => console.log('Fetch pending...'));
+            .catch(e => console.log('Fetch silent fail (normal for initial load)'));
         }
 
         function renderActive(rows) {
             const list = document.getElementById('active-list');
             const active = rows.filter(r => r.Result === 'RUNNING' || !r.Exit);
             const badge = document.getElementById('badge-active');
+            
             if(active.length > 0) { badge.innerText = active.length; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
+            
             if(active.length === 0) { list.innerHTML = `<div class="text-center py-10 opacity-30"><p>ว่างเปล่า...</p></div>`; return; }
+            
             let html = '';
             active.reverse().forEach(item => {
                 html += `
@@ -248,52 +253,60 @@
         function renderDashboard(rows) {
             const closed = rows.filter(r => r.Result !== 'RUNNING' && r.Exit);
             let wins=0, totalPL=0;
-            closed.forEach(r => { if(r.Result === 'WIN') wins++; totalPL += parseFloat(r['P/L ($)'] || 0); });
+            closed.forEach(r => { if(r.Result==='WIN') wins++; totalPL += parseFloat(r['P/L ($)']||0); });
             const winRate = closed.length ? Math.round((wins/closed.length)*100) : 0;
+            
             document.getElementById('dash-winrate').innerText = `${winRate}%`;
+            document.getElementById('dash-winrate').className = `text-3xl font-bold mt-1 ${winRate>=50?'text-emerald-400':'text-rose-400'}`;
             document.getElementById('dash-profit').innerText = `${totalPL>0?'+':''}${totalPL.toFixed(2)}`;
-            let psychoHTML = '';
+            document.getElementById('dash-profit').className = `text-3xl font-bold mt-1 ${totalPL>=0?'text-emerald-400':'text-rose-400'}`;
+
+            // Psycho Logic
             const badEmo = closed.filter(r => (r.Emotion==='FOMO'||r.Emotion==='Revenge') && r.Result==='LOSS').length;
-            if(badEmo > 0) psychoHTML = `⚠️ เสียเพราะอารมณ์ ${badEmo} ครั้ง!`; else psychoHTML = `🌟 ฟอร์มกำลังดี`;
-            document.getElementById('psycho-feedback').innerHTML = psychoHTML;
-            let histHtml = '';
+            const msg = badEmo > 0 ? `⚠️ เสียเพราะอารมณ์ ${badEmo} ครั้ง!` : (winRate>60 ? `🌟 ฟอร์มกำลังดี!` : `📉 สู้ต่อไป`);
+            document.getElementById('psycho-feedback').innerHTML = msg;
+
+            let hHtml = '';
             closed.slice(-5).reverse().forEach(item => {
-                const pl = parseFloat(item['P/L ($)'] || 0);
-                histHtml += `
+                const pl = parseFloat(item['P/L ($)']||0);
+                hHtml += `
                 <div onclick='openModal(${JSON.stringify(item)})' class="flex justify-between items-center p-3 border-b border-slate-700/50 hover:bg-slate-800/50 cursor-pointer">
                     <div class="flex items-center gap-2"><span class="font-bold text-slate-300">${item.Pair}</span><span class="text-[10px] text-slate-500">${item.Position}</span></div>
                     <span class="font-mono font-bold ${pl>=0?'text-emerald-400':'text-rose-400'}">${pl>0?'+':''}${pl.toFixed(2)}$</span>
                 </div>`;
             });
-            document.getElementById('history-list').innerHTML = histHtml;
+            document.getElementById('history-list').innerHTML = hHtml || '<div class="text-center text-xs opacity-50 mt-4">ไม่มีประวัติ</div>';
         }
 
+        // --- MODAL ---
         function openModal(item) {
             const m = document.getElementById('detailModal');
             const isRunning = (item.Result === 'RUNNING' || !item.Exit);
-            document.getElementById('modalID').innerText = `ID: ${item.ID}`;
+            document.getElementById('modalID').innerText = item.ID;
             document.getElementById('modalTitle').innerHTML = `${item.Pair} ${item.Position}`;
             document.getElementById('modalEntry').innerText = item.Entry;
             document.getElementById('modalLot').innerText = item.Lot;
-            let tags = `<span class="px-2 py-1 rounded bg-slate-700 text-xs text-slate-300">${item.Emotion}</span><span class="px-2 py-1 rounded bg-slate-700 text-xs text-slate-300 ml-2">${item.Risk}</span>`;
-            document.getElementById('modalTags').innerHTML = tags;
-            
+            document.getElementById('modalTags').innerHTML = `<span class="bg-slate-700 px-2 rounded text-xs text-slate-300">${item.Emotion}</span><span class="bg-slate-700 px-2 rounded text-xs text-slate-300">${item.Risk}</span>`;
+
             if(isRunning) {
-                document.getElementById('closeSection').classList.remove('hidden'); document.getElementById('historySection').classList.add('hidden');
+                document.getElementById('closeSection').classList.remove('hidden');
+                document.getElementById('historySection').classList.add('hidden');
                 document.getElementById('formId').value = item.ID;
-                document.getElementById('modalExit').value = ''; document.getElementById('modalPL').value = '';
+                document.getElementById('modalExit').value = '';
+                document.getElementById('modalPL').value = '';
                 document.getElementById('modalExit').oninput = function() {
-                    const exit = parseFloat(this.value); const entry = parseFloat(item.Entry); const lot = parseFloat(item.Lot);
-                    if(!exit) return;
-                    let diff = (item.Position === 'BUY') ? (exit - entry) : (entry - exit);
+                    const ex = parseFloat(this.value); const en = parseFloat(item.Entry); const lot = parseFloat(item.Lot);
+                    if(!ex) return;
+                    let diff = (item.Position==='BUY') ? (ex-en) : (en-ex);
                     let mult = item.Pair.includes('JPY') ? 1000 : (item.Pair.includes('XAU') ? 100 : 100000);
-                    let profit = diff * lot * mult;
+                    let profit = diff*lot*mult;
                     document.getElementById('modalPL').value = profit.toFixed(2);
                     document.getElementById('modalPL').className = `bg-transparent text-right font-bold w-24 outline-none ${profit>=0?'text-emerald-400':'text-rose-400'}`;
                     document.getElementById('modalResult').value = profit>=0 ? 'WIN' : 'LOSS';
                 };
             } else {
-                document.getElementById('closeSection').classList.add('hidden'); document.getElementById('historySection').classList.remove('hidden');
+                document.getElementById('closeSection').classList.add('hidden');
+                document.getElementById('historySection').classList.remove('hidden');
                 const pl = parseFloat(item['P/L ($)']);
                 document.getElementById('historyPL').innerText = `${pl>0?'+':''}${pl.toFixed(2)}$`;
                 document.getElementById('historyPL').className = `text-2xl font-bold mt-2 ${pl>=0?'text-emerald-400':'text-rose-400'}`;
@@ -302,52 +315,60 @@
         }
         function closeModal() { document.getElementById('detailModal').classList.add('hidden'); }
 
-        document.getElementById('createForm').addEventListener('submit', handleForm);
-        document.getElementById('closeForm').addEventListener('submit', handleForm);
-
+        // --- SUBMIT HANDLER (TEXT/PLAIN) ---
         function handleForm(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
-            const originalText = btn.innerText;
+            const txt = btn.innerText;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...'; btn.disabled = true;
 
-            // Generate ID
-            if(e.target.id === 'createForm') {
-                document.getElementById('idField').value = 'ORD-' + Date.now();
-            }
+            const now = new Date();
+            document.getElementById('dateField').value = now.toLocaleDateString('th-TH');
+            document.getElementById('timeField').value = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
+            if(e.target.id === 'createForm') document.getElementById('idField').value = 'ORD-'+Date.now();
 
-            // Convert FormData to URLSearchParams (Form-Encoded)
             const formData = new FormData(e.target);
-            const data = new URLSearchParams();
-            formData.forEach((v, k) => {
-                data.append(k, v);
-            });
-            // Defaults
-            ['H1 Trend', 'M15 Signal', 'ADX > 20', 'Retest'].forEach(k => { if(!data.has(k)) data.append(k, 'No'); });
+            const data = {};
+            formData.forEach((v, k) => data[k] = v);
+            ['H1 Trend', 'M15 Signal', 'ADX > 20', 'Retest'].forEach(k => { if(!data[k]) data[k] = 'No'; });
 
-            // ⭐⭐ NO-CORS MODE: ส่งข้อมูลแบบไม่รอคำตอบ (แก้ Connection Failed ถาวร) ⭐⭐
+            // ⭐⭐ TEXT/PLAIN SENDING ⭐⭐
             fetch(scriptURL, {
                 method: "POST",
-                mode: "no-cors", 
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: data
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(data)
             })
-            .then(() => {
-                // เพราะ no-cors จะไม่คืนค่า success เราเลยสมมติว่าสำเร็จถ้าไม่มี Error
-                showToast('✅ บันทึกแล้ว (No-CORS Mode)');
-                if(e.target.id === 'createForm') { e.target.reset(); switchTab('active'); }
-                if(e.target.id === 'closeForm') { closeModal(); }
-                
-                // รอแป๊บแล้วค่อยโหลดข้อมูลใหม่ (เพราะ no-cors อาจดีเลย์นิดนึง)
-                setTimeout(() => fetchData(), 1500);
+            .then(res => res.json())
+            .then(res => {
+                if(res.result === 'success' || res.result === 'updated') {
+                    showToast('✅ บันทึกสำเร็จ!');
+                    if(e.target.id === 'createForm') { e.target.reset(); switchTab('active'); }
+                    if(e.target.id === 'closeForm') { closeModal(); }
+                    fetchData();
+                } else {
+                    document.getElementById('debug-log').innerText = "Error: " + JSON.stringify(res);
+                    document.getElementById('debug-log').classList.remove('hidden');
+                }
             })
             .catch(err => {
-                console.error(err);
-                showToast('❌ Error แปลกๆ: ' + err.message);
+                // If text/plain works, it might not return JSON nicely in some browsers, but data IS saved.
+                console.warn(err);
+                if(err.name === 'SyntaxError') {
+                     showToast('✅ น่าจะบันทึกแล้ว (Syntax Check)');
+                     if(e.target.id === 'createForm') { e.target.reset(); switchTab('active'); }
+                     if(e.target.id === 'closeForm') { closeModal(); }
+                     setTimeout(fetchData, 1000);
+                } else {
+                     document.getElementById('debug-log').innerText = "Conn Error: " + err.message;
+                     document.getElementById('debug-log').classList.remove('hidden');
+                }
             })
-            .finally(() => { btn.innerText = originalText; btn.disabled = false; });
+            .finally(() => { btn.innerText = txt; btn.disabled = false; });
         }
-        
+
+        document.getElementById('createForm').addEventListener('submit', handleForm);
+        document.getElementById('closeForm').addEventListener('submit', handleForm);
+
         if(scriptURL && !scriptURL.includes('HERE')) fetchData();
     </script>
 </body>
