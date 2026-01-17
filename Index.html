@@ -3,375 +3,536 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Trading Journal: Psycho Analysis</title>
+    <title>Pro Trading Mentor v4.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Sarabun', sans-serif; background-color: #0f172a; color: #cbd5e1; }
-        .glass-panel { background: #1e293b; border: 1px solid #334155; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .input-soft { background-color: #334155; border: 1px solid #475569; color: #f1f5f9; transition: all 0.2s; }
-        .input-soft:focus { border-color: #2dd4bf; outline: none; background-color: #1e293b; }
-        .accent-teal { color: #2dd4bf; }
-        .tab-btn { transition: all 0.3s; border-bottom: 2px solid transparent; opacity: 0.6; }
-        .tab-btn.active { border-color: #2dd4bf; color: #2dd4bf; opacity: 1; font-weight: 600; }
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        :root {
+            --bg-dark: #050810;
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --accent-blue: #38bdf8;
+            --accent-purple: #818cf8;
+            --success: #10b981;
+            --danger: #f43f5e;
+        }
+        body { 
+            font-family: 'Plus Jakarta Sans', 'Sarabun', sans-serif; 
+            background-color: var(--bg-dark); 
+            color: #f8fafc;
+            background-image: radial-gradient(circle at 50% -20%, #1e293b 0%, #050810 80%);
+            min-height: 100vh;
+        }
+        .glass-card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+        }
+        .input-style {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: white;
+            transition: all 0.3s;
+        }
+        .input-style:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+            outline: none;
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.3);
+        }
+        .nav-item { transition: all 0.3s ease; }
+        .nav-item.active { color: var(--accent-blue); transform: translateY(-2px); }
+        .tab-content { animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .checkbox-custom { width: 1.2rem; height: 1.2rem; border-radius: 6px; border: 2px solid #334155; appearance: none; cursor: pointer; position: relative; transition: all 0.2s; }
+        .checkbox-custom:checked { background-color: var(--accent-blue); border-color: var(--accent-blue); }
+        .checkbox-custom:checked::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: white; font-size: 0.7rem; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
     </style>
 </head>
-<body class="min-h-screen pb-24 text-sm">
+<body class="pb-24">
 
     <script>
-        // ⚠️⚠️ วาง URL ใหม่ (ลงท้าย /exec) ตรงนี้ ⚠️⚠️
+        // ⚠️ ต้องใส่ Apps Script URL ของคุณที่นี่
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyncps3larhrUUDtCWP_C0AXB1PR3oAO9TgFFwLgN9wqYNIA1Sg021XiP2CDBfrjaoz/exec'; 
+        let submitted = false;
+        let allData = [];
+        let equityChart = null;
     </script>
 
-    <!-- iframe ล่องหน (พระเอกของเรา) -->
-    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { formSubmitCallback(); }"></iframe>
+    <iframe name="hidden_iframe" style="display:none;" onload="if(submitted) handleFormResponse();"></iframe>
 
     <!-- Header -->
-    <nav class="fixed top-0 w-full z-40 bg-[#0f172a]/95 backdrop-blur border-b border-slate-700">
-        <div class="max-w-lg mx-auto px-4 h-14 flex justify-between items-center">
-            <div class="flex items-center gap-2 text-lg font-bold text-slate-200">
-                <i class="fa-solid fa-brain accent-teal"></i> PsychoTrade
+    <header class="p-6 flex justify-between items-center sticky top-0 z-40 backdrop-blur-md">
+        <div>
+            <p class="text-[10px] font-bold text-sky-400 uppercase tracking-[0.2em]">Personal Mentor</p>
+            <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">TradeMaster <span class="text-sky-400">v4.1</span></h1>
+        </div>
+        <div class="flex gap-3">
+            <button onclick="fetchData()" class="w-10 h-10 rounded-2xl glass-card flex items-center justify-center text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-arrows-rotate text-sm"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="px-6 max-w-lg mx-auto">
+        
+        <!-- VIEW: RECORD -->
+        <section id="view-record" class="tab-content space-y-5">
+            <div class="glass-card p-2 flex gap-1">
+                <div class="flex-1 py-3 px-4 rounded-xl bg-blue-500/10 border border-blue-500/20">
+                    <p class="text-[9px] font-bold text-blue-400 uppercase mb-1">Lot ที่แนะนำ</p>
+                    <p id="rec-lot" class="text-lg font-bold text-white">0.01 <span class="text-[10px] font-normal opacity-60">LOT</span></p>
+                </div>
+                <div class="flex-1 py-3 px-4 rounded-xl bg-purple-500/10 border border-purple-500/20 text-right">
+                    <p class="text-[9px] font-bold text-purple-400 uppercase mb-1">ความเสี่ยงสูงสุด ($)</p>
+                    <p id="max-risk" class="text-lg font-bold text-white">$2.00</p>
+                </div>
             </div>
-            <button onclick="window.location.reload()" class="w-8 h-8 rounded-full bg-slate-800 flex justify-center items-center hover:bg-slate-700">
-                <i class="fa-solid fa-rotate text-xs"></i>
-            </button>
-        </div>
-        <div class="max-w-lg mx-auto flex border-t border-slate-700">
-            <button onclick="switchTab('record')" id="tab-record" class="flex-1 py-3 tab-btn active">จดบันทึก</button>
-            <button onclick="switchTab('active')" id="tab-active" class="flex-1 py-3 tab-btn relative">
-                ถืออยู่ <span id="badge-active" class="ml-1 bg-rose-500 text-white text-[10px] px-1.5 rounded-full hidden">0</span>
-            </button>
-            <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex-1 py-3 tab-btn">วิเคราะห์</button>
-        </div>
-    </nav>
 
-    <!-- Debug Box -->
-    <div id="debug-log" class="hidden fixed top-20 left-4 right-4 bg-red-900/90 text-white p-3 rounded-lg z-50 text-xs break-all border border-red-500"></div>
-
-    <div class="max-w-lg mx-auto mt-28 px-4">
-
-        <!-- TAB 1: RECORD -->
-        <div id="view-record" class="fade-in">
-            <!-- เปลี่ยนเป็น Form ธรรมดา ส่งไป Iframe -->
-            <form id="createForm" target="hidden_iframe" method="POST" class="space-y-4" onsubmit="submitted=true;">
+            <form id="recordForm" action="" method="POST" target="hidden_iframe" onsubmit="submitted=true; prepareSubmit('create');">
                 <input type="hidden" name="action" value="create">
-                
-                <div class="glass-panel rounded-2xl p-5 space-y-4">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">ข้อมูลเทรด</h3>
-                    <div class="grid grid-cols-2 gap-3">
-                        <select name="Pair" class="input-soft w-full rounded-xl p-3">
-                            <option value="XAUUSD">XAUUSD (ทองคำ)</option>
-                            <option value="EURUSD">EURUSD</option>
-                            <option value="USDJPY">USDJPY</option>
-                            <option value="BTCUSD">BTCUSD</option>
-                        </select>
-                        <input type="number" step="0.01" name="Lot" value="0.01" class="input-soft w-full rounded-xl p-3 text-center">
-                    </div>
-                    <div class="flex bg-slate-700 p-1 rounded-xl">
-                        <label class="flex-1 cursor-pointer">
-                            <input type="radio" name="Position" value="BUY" class="peer hidden" checked>
-                            <div class="py-2 text-center rounded-lg text-slate-400 peer-checked:bg-emerald-600 peer-checked:text-white font-bold transition">BUY</div>
-                        </label>
-                        <label class="flex-1 cursor-pointer">
-                            <input type="radio" name="Position" value="SELL" class="peer hidden">
-                            <div class="py-2 text-center rounded-lg text-slate-400 peer-checked:bg-rose-600 peer-checked:text-white font-bold transition">SELL</div>
-                        </label>
-                    </div>
-                    <input type="number" step="0.01" name="Entry" placeholder="ราคาเข้า (Entry)" class="input-soft w-full rounded-xl p-3 text-center text-lg font-mono" required>
-                </div>
-
-                <div class="glass-panel rounded-2xl p-5 border-l-4 border-indigo-500 space-y-3">
-                    <h3 class="text-xs font-bold text-indigo-400 uppercase tracking-wider"><i class="fa-solid fa-user-doctor mr-1"></i> จิตวิทยา</h3>
-                    <div>
-                        <label class="text-xs text-slate-500 block mb-1">อารมณ์?</label>
-                        <select name="Emotion" class="input-soft w-full rounded-lg p-2 text-sm">
-                            <option value="Neutral">😐 ปกติ</option>
-                            <option value="Confident">😎 มั่นใจ</option>
-                            <option value="FOMO">😱 กลัวตกรถ</option>
-                            <option value="Revenge">😡 หัวร้อน</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-xs text-slate-500 block mb-1">ความเสี่ยง?</label>
-                        <select name="Risk" class="input-soft w-full rounded-lg p-2 text-sm">
-                            <option value="Low">🟢 ต่ำ</option>
-                            <option value="Medium">🟡 ปานกลาง</option>
-                            <option value="High">🔴 สูง</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="glass-panel rounded-2xl p-5">
-                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Checklist</h3>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <!-- Hidden inputs for unchecked boxes -->
-                        <input type="hidden" name="H1 Trend" value="No"><input type="hidden" name="M15 Signal" value="No"><input type="hidden" name="ADX > 20" value="No"><input type="hidden" name="Retest" value="No">
-                        
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700"><input type="checkbox" name="H1 Trend" value="Yes" class="mr-2"> H1 Trend</label>
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700"><input type="checkbox" name="M15 Signal" value="Yes" class="mr-2"> M15 Signal</label>
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700"><input type="checkbox" name="ADX > 20" value="Yes" class="mr-2"> ADX > 20</label>
-                        <label class="flex items-center p-2 rounded hover:bg-slate-700"><input type="checkbox" name="Retest" value="Yes" class="mr-2"> Retest</label>
-                    </div>
-                </div>
-
+                <input type="hidden" name="ID" id="input-id">
+                <input type="hidden" name="Date" id="input-date">
+                <input type="hidden" name="Time" id="input-time">
                 <input type="hidden" name="Result" value="RUNNING">
-                <input type="hidden" name="ID" id="idField_Create">
-                <input type="hidden" name="Date" id="dateField_Create">
-                <input type="hidden" name="Time" id="timeField_Create">
 
-                <button type="submit" id="btnCreate" class="w-full py-4 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 font-bold text-slate-900 shadow-lg text-lg active:scale-95 transition">
-                    บันทึกออเดอร์
+                <div class="glass-card p-6 space-y-6">
+                    <div class="flex gap-4">
+                        <div class="flex-1">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">คู่เงิน/สินทรัพย์</label>
+                            <select name="Pair" class="input-style w-full p-3 font-bold appearance-none">
+                                <option value="XAUUSD">GOLD (XAUUSD)</option>
+                                <option value="EURUSD">EURUSD</option>
+                                <option value="GBPUSD">GBPUSD</option>
+                                <option value="USDJPY">USDJPY</option>
+                            </select>
+                        </div>
+                        <div class="w-28">
+                            <label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">Lot</label>
+                            <input type="number" step="0.01" name="Lot" value="0.01" class="input-style w-full p-3 text-center font-bold">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 p-1 bg-slate-900/50 rounded-2xl">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="Position" value="BUY" checked class="hidden peer">
+                            <div class="py-3 text-center rounded-xl peer-checked:bg-emerald-500 peer-checked:text-white text-slate-500 font-bold transition-all">BUY</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="Position" value="SELL" class="hidden peer">
+                            <div class="py-3 text-center rounded-xl peer-checked:bg-rose-500 peer-checked:text-white text-slate-500 font-bold transition-all">SELL</div>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block text-center">ราคาเข้าออเดอร์ (Entry)</label>
+                        <input type="number" step="0.00001" name="Entry" placeholder="0.00000" class="input-style w-full p-4 text-2xl font-mono text-center tracking-wider text-sky-400" required>
+                    </div>
+                </div>
+
+                <!-- Technical Checklist -->
+                <div class="mt-5 glass-card p-6 border-t-4 border-sky-500">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-shield-check text-sky-500"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-widest">เช็คลิสต์ทางเทคนิค</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="flex items-center justify-between p-4 bg-slate-900/30 rounded-2xl border border-white/5 cursor-pointer hover:bg-slate-800 transition">
+                            <span class="text-xs text-slate-300">เทรนด์ H1 สอดคล้อง (EMA 50)</span>
+                            <input type="checkbox" name="H1 Trend" value="Yes" class="checkbox-custom">
+                        </label>
+                        <label class="flex items-center justify-between p-4 bg-slate-900/30 rounded-2xl border border-white/5 cursor-pointer hover:bg-slate-800 transition">
+                            <span class="text-xs text-slate-300">M15 EMA 8/21 ตัดกันแล้ว</span>
+                            <input type="checkbox" name="M15 Signal" value="Yes" class="checkbox-custom">
+                        </label>
+                        <label class="flex items-center justify-between p-4 bg-slate-900/30 rounded-2xl border border-white/5 cursor-pointer hover:bg-slate-800 transition">
+                            <span class="text-xs text-slate-300">ADX > 20 มีแรงส่งชัดเจน</span>
+                            <input type="checkbox" name="ADX > 20" value="Yes" class="checkbox-custom">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Psychology Section (Thai) -->
+                <div class="mt-5 glass-card p-6">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase mb-3 block">สภาวะจิตใจตอนเข้าเทรด</label>
+                    <div class="flex gap-2 mb-4 overflow-x-auto pb-2">
+                        <label class="shrink-0 cursor-pointer">
+                            <input type="radio" name="Emotion" value="Neutral" checked class="hidden peer">
+                            <div class="px-4 py-2 rounded-full border border-white/10 text-[11px] peer-checked:bg-white peer-checked:text-black transition">😐 ปกติ</div>
+                        </label>
+                        <label class="shrink-0 cursor-pointer">
+                            <input type="radio" name="Emotion" value="Fear" class="hidden peer">
+                            <div class="px-4 py-2 rounded-full border border-white/10 text-[11px] peer-checked:bg-amber-500 peer-checked:text-white transition">😨 กลัวตกรถ (FOMO)</div>
+                        </label>
+                        <label class="shrink-0 cursor-pointer">
+                            <input type="radio" name="Emotion" value="Greed" class="hidden peer">
+                            <div class="px-4 py-2 rounded-full border border-white/10 text-[11px] peer-checked:bg-purple-500 peer-checked:text-white transition">🤑 โลภ/มั่นใจเกิน</div>
+                        </label>
+                        <label class="shrink-0 cursor-pointer">
+                            <input type="radio" name="Emotion" value="Revenge" class="hidden peer">
+                            <div class="px-4 py-2 rounded-full border border-white/10 text-[11px] peer-checked:bg-rose-500 peer-checked:text-white transition">🔥 อยากเอาคืน</div>
+                        </label>
+                    </div>
+                    <textarea name="Notes" placeholder="บันทึกความคิดวินาทีก่อนกดออเดอร์..." class="input-style w-full p-4 text-sm h-24 resize-none"></textarea>
+                </div>
+
+                <button type="submit" id="btn-submit" class="w-full mt-6 py-5 btn-gradient rounded-3xl font-bold text-white text-lg transition-all active:scale-[0.98]">
+                    เปิดออเดอร์
                 </button>
             </form>
-        </div>
+        </section>
 
-        <!-- TAB 2: ACTIVE -->
-        <div id="view-active" class="hidden fade-in space-y-3">
-            <div id="active-list" class="space-y-3"></div>
-        </div>
+        <!-- VIEW: DASHBOARD -->
+        <section id="view-stats" class="tab-content hidden space-y-5">
+            <div class="glass-card p-6 relative overflow-hidden">
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">พอร์ตโดยรวม</p>
+                <h2 id="balance-val" class="text-4xl font-bold text-white mb-4">$10.00</h2>
+                <div class="h-32 w-full">
+                    <canvas id="equityChart"></canvas>
+                </div>
+            </div>
 
-        <!-- TAB 3: DASHBOARD -->
-        <div id="view-dashboard" class="hidden fade-in space-y-5">
             <div class="grid grid-cols-2 gap-4">
-                <div class="glass-panel p-5 rounded-2xl text-center">
-                    <p class="text-xs text-slate-400 uppercase">Win Rate</p>
-                    <h2 id="dash-winrate" class="text-3xl font-bold mt-1">--%</h2>
+                <div class="glass-card p-5 text-center">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase mb-1">อัตราชนะ</p>
+                    <p id="winrate-val" class="text-2xl font-bold text-sky-400">0%</p>
                 </div>
-                <div class="glass-panel p-5 rounded-2xl text-center">
-                    <p class="text-xs text-slate-400 uppercase">Net Profit</p>
-                    <h2 id="dash-profit" class="text-3xl font-bold mt-1">--</h2>
+                <div class="glass-card p-5 text-center">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase mb-1">กำไรเฉลี่ย</p>
+                    <p id="avg-profit-val" class="text-2xl font-bold text-emerald-400">+$0.00</p>
                 </div>
             </div>
-            <div class="glass-panel p-5 rounded-2xl border-t-4 border-purple-500">
-                <h3 class="font-bold text-slate-200 mb-2">บทวิเคราะห์</h3>
-                <div id="psycho-feedback" class="text-sm text-slate-300">...</div>
-            </div>
-            <div id="history-list" class="space-y-2"></div>
-        </div>
-    </div>
 
-    <!-- MODAL -->
-    <div id="detailModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm fade-in">
-        <div class="bg-slate-800 w-full max-w-sm rounded-2xl border border-slate-600 shadow-2xl overflow-hidden">
-            <div class="bg-slate-900/80 p-4 flex justify-between items-center border-b border-slate-700">
-                <div><span id="modalID" class="text-[10px] text-slate-500 block"></span><h3 id="modalTitle" class="font-bold text-white text-lg"></h3></div>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <div class="p-5 space-y-5 overflow-y-auto max-h-[70vh]">
-                <div class="grid grid-cols-2 gap-4 text-center">
-                    <div class="bg-slate-700/50 p-2 rounded-xl"><p class="text-xs text-slate-400">Entry</p><p id="modalEntry" class="font-mono text-lg text-teal-400"></p></div>
-                    <div class="bg-slate-700/50 p-2 rounded-xl"><p class="text-xs text-slate-400">Lot</p><p id="modalLot" class="font-mono text-lg text-white"></p></div>
+            <div class="glass-card p-6 border-l-4 border-indigo-500">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold">บทวิเคราะห์จาก Mentor</h3>
+                        <p class="text-[9px] text-slate-500 uppercase">เจาะลึกพฤติกรรมของคุณ</p>
+                    </div>
                 </div>
-                <div id="modalTags" class="flex flex-wrap gap-2 justify-center"></div>
+                <div id="mentor-advice" class="space-y-4">
+                    <div class="p-4 bg-slate-900/50 rounded-2xl text-xs text-slate-400 italic">กำลังรอข้อมูลบันทึกเพิ่มเติม...</div>
+                </div>
+            </div>
 
-                <form id="closeForm" target="hidden_iframe" method="POST" class="space-y-4 pt-4 border-t border-slate-700" onsubmit="submitted=true;">
+            <div id="history-list" class="space-y-3 pb-10"></div>
+        </section>
+
+        <!-- VIEW: ACTIVE -->
+        <section id="view-active" class="tab-content hidden space-y-4">
+            <div id="active-list" class="space-y-4"></div>
+        </section>
+
+    </main>
+
+    <!-- Navigation -->
+    <nav class="fixed bottom-6 left-6 right-6 h-20 glass-card z-50 flex justify-around items-center px-4 shadow-2xl">
+        <button onclick="switchView('record')" id="nav-record" class="nav-item flex flex-col items-center gap-1 text-sky-500">
+            <i class="fa-solid fa-plus-circle text-2xl"></i>
+            <span class="text-[9px] font-bold uppercase">บันทึก</span>
+        </button>
+        <button onclick="switchView('active')" id="nav-active" class="nav-item flex flex-col items-center gap-1 text-slate-500">
+            <div class="relative">
+                <i class="fa-solid fa-layer-group text-2xl"></i>
+                <span id="badge-count" class="absolute -top-1 -right-2 bg-rose-500 text-white text-[8px] w-4 h-4 rounded-full hidden flex items-center justify-center">0</span>
+            </div>
+            <span class="text-[9px] font-bold uppercase">ออเดอร์ค้าง</span>
+        </button>
+        <button onclick="switchView('stats')" id="nav-stats" class="nav-item flex flex-col items-center gap-1 text-slate-500">
+            <i class="fa-solid fa-chart-pie text-2xl"></i>
+            <span class="text-[9px] font-bold uppercase">สถิติ</span>
+        </button>
+    </nav>
+
+    <!-- Modal: Close Position -->
+    <div id="modal-close" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
+        <div class="glass-card w-full max-w-sm overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                <h3 class="font-bold text-lg">ปิดออเดอร์</h3>
+                <button onclick="closeModal()" class="text-slate-500"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 space-y-5">
+                <form id="closeForm" action="" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
                     <input type="hidden" name="action" value="update">
-                    <input type="hidden" name="id" id="formId">
+                    <input type="hidden" name="id" id="close-id">
+                    <input type="hidden" name="Result" id="close-result">
                     
-                    <div id="closeSection">
-                        <label class="text-xs text-slate-400 mb-1 block">ราคาปิด (Exit)</label>
-                        <input type="number" step="0.01" name="Exit" id="modalExit" class="input-soft w-full rounded-xl p-3 text-center text-xl font-bold text-amber-400" placeholder="0.00">
-                        <div class="flex justify-between items-center mt-3 bg-slate-900 p-3 rounded-lg">
-                            <span class="text-slate-400 text-xs">P/L:</span>
-                            <input type="text" name="P/L ($)" id="modalPL" class="bg-transparent text-right font-bold w-24 outline-none" readonly>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">ราคาที่ปิด (Exit)</label>
+                            <input type="number" step="0.00001" name="Exit" id="exit-price" class="input-style w-full p-4 text-xl font-mono text-center text-amber-400" required>
                         </div>
-                        <input type="hidden" name="Result" id="modalResult">
-                        <div class="mt-3">
-                            <textarea name="Review" class="input-soft w-full rounded-xl p-2 text-sm h-20" placeholder="บทเรียน..."></textarea>
+                        <div class="flex justify-between items-center p-4 bg-slate-900/50 rounded-2xl">
+                            <span class="text-xs font-bold text-slate-400">กำไร/ขาดทุนสุทธิ</span>
+                            <input type="text" name="P/L ($)" id="pl-display" class="bg-transparent text-right font-bold text-lg outline-none w-24" readonly>
                         </div>
-                        <button type="submit" id="btnCloseConfirm" class="w-full mt-2 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl">ยืนยันปิด</button>
+                        <textarea name="Review" placeholder="เขียนบันทึกหลังปิดออเดอร์ (ไม้หน้าควรทำอย่างไร)..." class="input-style w-full p-4 text-sm h-24 resize-none"></textarea>
                     </div>
-                    <div id="historySection" class="hidden text-center">
-                        <p class="text-sm text-slate-400">ปิดแล้ว</p>
-                        <p id="historyPL" class="text-2xl font-bold mt-2"></p>
-                    </div>
+                    <button type="submit" class="w-full mt-6 py-4 bg-white text-black font-bold rounded-2xl hover:bg-sky-400 transition-colors">ยืนยันการปิด</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <!-- Toast -->
-    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-emerald-600 text-white px-6 py-3 rounded-full shadow-xl text-sm transition-all duration-300 -translate-y-20 opacity-0 z-[60] flex items-center gap-2">
-        <i class="fa-solid fa-check-circle"></i> <span id="toastMsg">Saved!</span>
+    <!-- Notification -->
+    <div id="toast" class="fixed top-8 left-1/2 -translate-x-1/2 glass-card px-6 py-4 flex items-center gap-3 transition-all duration-500 -translate-y-32 z-[100]">
+        <div class="w-8 h-8 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-500">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <span id="toast-msg" class="text-sm font-bold">บันทึกเรียบร้อย</span>
     </div>
 
     <script>
-        // --- CORE SETTINGS ---
-        let submitted = false; // ตัวแปรเช็คสถานะการส่ง
+        const START_BALANCE = 10.0;
 
-        // ตั้งค่า URL ของ Forms
-        function setFormActions() {
-            if(!scriptURL || scriptURL.includes('HERE')) {
-                document.getElementById('debug-log').innerText = "⚠️ กรุณาใส่ URL ของ Apps Script ก่อน";
-                document.getElementById('debug-log').classList.remove('hidden');
-                return;
-            }
-            document.getElementById('createForm').action = scriptURL;
-            document.getElementById('closeForm').action = scriptURL;
-        }
-
-        // --- CALLBACK เมื่อส่งข้อมูลเสร็จ ---
-        // ฟังก์ชันนี้จะทำงานเมื่อ Iframe โหลดเสร็จ (แปลว่าส่งข้อมูลสำเร็จ)
-        function formSubmitCallback() {
-            if(submitted) {
-                showToast('✅ บันทึกสำเร็จ!');
-                
-                // รีเซ็ตฟอร์ม
-                document.getElementById('createForm').reset();
-                if(!document.getElementById('detailModal').classList.contains('hidden')) {
-                     closeModal();
-                }
-                
-                // สลับไปหน้า Active (ถ้ากดสร้างใหม่)
-                const activeTab = document.querySelector('.tab-btn.active').id;
-                if(activeTab === 'tab-record') {
-                    switchTab('active');
-                }
-
-                submitted = false; // รีเซ็ตสถานะ
-                
-                // โหลดข้อมูลใหม่ (ดีเลย์นิดนึงให้ Sheet อัปเดตทัน)
-                setTimeout(fetchData, 1500);
-            }
-        }
-
-        // --- PREPARE DATA BEFORE SUBMIT ---
-        document.getElementById('createForm').addEventListener('submit', function() {
-            const now = new Date();
-            document.getElementById('dateField_Create').value = now.toLocaleDateString('th-TH');
-            document.getElementById('timeField_Create').value = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-            document.getElementById('idField_Create').value = 'ORD-' + Date.now();
-            
-            // เปลี่ยนปุ่มเป็น Loading
-            const btn = document.getElementById('btnCreate');
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
-            // คืนค่าปุ่มหลัง 3 วิ (กันค้าง)
-            setTimeout(() => { btn.innerText = 'บันทึกออเดอร์'; }, 3000);
-        });
-
-        document.getElementById('closeForm').addEventListener('submit', function() {
-             const btn = document.getElementById('btnCloseConfirm');
-             btn.innerText = 'Saving...';
-             setTimeout(() => { btn.innerText = 'ยืนยันปิด'; }, 3000);
-        });
-
-        // --- UI LOGIC (เหมือนเดิม) ---
-        let allData = [];
-
-        function switchTab(tab) {
-            document.querySelectorAll('[id^="view-"]').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(`view-${tab}`).classList.remove('hidden');
-            document.getElementById(`tab-${tab}`).classList.add('active');
-            if(tab !== 'record') fetchData();
+        function switchView(view) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`view-${view}`).classList.remove('hidden');
+            document.querySelectorAll('nav button').forEach(b => {
+                b.classList.remove('text-sky-500');
+                b.classList.add('text-slate-500');
+            });
+            document.getElementById(`nav-${view}`).classList.remove('text-slate-500');
+            document.getElementById(`nav-${view}`).classList.add('text-sky-500');
+            if (view === 'stats') renderChart();
         }
 
         function showToast(msg) {
             const t = document.getElementById('toast');
-            document.getElementById('toastMsg').innerText = msg;
-            t.classList.remove('-translate-y-20', 'opacity-0');
-            setTimeout(() => t.classList.add('-translate-y-20', 'opacity-0'), 3000);
+            document.getElementById('toast-msg').innerText = msg;
+            t.classList.remove('-translate-y-32');
+            setTimeout(() => t.classList.add('-translate-y-32'), 3000);
+        }
+
+        function prepareSubmit(action) {
+            if (action === 'create') {
+                const now = new Date();
+                document.getElementById('input-id').value = 'TRD-' + Date.now();
+                document.getElementById('input-date').value = now.toLocaleDateString('th-TH');
+                document.getElementById('input-time').value = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
+                document.getElementById('btn-submit').innerText = 'กำลังส่งข้อมูล...';
+            }
+        }
+
+        function handleFormResponse() {
+            if (submitted) {
+                showToast('อัปเดตข้อมูลสำเร็จ');
+                submitted = false;
+                document.getElementById('recordForm').reset();
+                document.getElementById('btn-submit').innerText = 'เปิดออเดอร์';
+                closeModal();
+                fetchData();
+            }
         }
 
         function fetchData() {
-            if(!scriptURL || scriptURL.includes('HERE')) return;
-            // Fetch GET มักจะไม่มีปัญหา CORS
-            fetch(scriptURL)
-            .then(res => res.json())
-            .then(data => {
+            if (!scriptURL || scriptURL.includes('URL')) return;
+            fetch(scriptURL).then(r => r.json()).then(data => {
                 const headers = data[0];
-                const rows = data.slice(1).map(row => {
-                    let obj = {}; headers.forEach((h, i) => obj[h] = row[i]); return obj;
+                allData = data.slice(1).map(row => {
+                    let o = {}; headers.forEach((h, i) => o[h] = row[i]); return o;
                 });
-                allData = rows;
-                renderActive(rows);
-                renderDashboard(rows);
-            })
-            .catch(e => console.log('Fetch error (reading):', e));
-        }
-
-        function renderActive(rows) {
-            const list = document.getElementById('active-list');
-            const active = rows.filter(r => r.Result === 'RUNNING' || !r.Exit);
-            const badge = document.getElementById('badge-active');
-            if(active.length > 0) { badge.innerText = active.length; badge.classList.remove('hidden'); } else { badge.classList.add('hidden'); }
-            if(active.length === 0) { list.innerHTML = `<div class="text-center py-10 opacity-30"><p>ว่างเปล่า...</p></div>`; return; }
-            let html = '';
-            active.reverse().forEach(item => {
-                html += `
-                <div onclick='openModal(${JSON.stringify(item)})' class="glass-panel p-4 rounded-xl flex justify-between items-center cursor-pointer hover:bg-slate-800 transition mb-3">
-                    <div>
-                        <div class="flex items-center gap-2"><span class="font-bold text-slate-200">${item.Pair}</span><span class="text-xs font-bold ${item.Position==='BUY'?'text-emerald-400':'text-rose-400'}">${item.Position}</span></div>
-                        <div class="text-xs text-slate-500 mt-1">Lot: ${item.Lot} • Entry: ${item.Entry}</div>
-                    </div>
-                    <div class="text-right"><span class="text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-full">แก้ไข</span></div>
-                </div>`;
+                processAnalysis();
+                renderActive();
+                renderHistory();
             });
-            list.innerHTML = html;
         }
 
-        function renderDashboard(rows) {
-            const closed = rows.filter(r => r.Result !== 'RUNNING' && r.Exit);
-            let wins=0, totalPL=0;
-            closed.forEach(r => { if(r.Result==='WIN') wins++; totalPL += parseFloat(r['P/L ($)']||0); });
-            const winRate = closed.length ? Math.round((wins/closed.length)*100) : 0;
-            document.getElementById('dash-winrate').innerText = `${winRate}%`;
-            document.getElementById('dash-profit').innerText = `${totalPL>0?'+':''}${totalPL.toFixed(2)}`;
-            let histHtml = '';
-            closed.slice(-5).reverse().forEach(item => {
-                const pl = parseFloat(item['P/L ($)']||0);
-                histHtml += `
-                <div onclick='openModal(${JSON.stringify(item)})' class="flex justify-between items-center p-3 border-b border-slate-700/50 hover:bg-slate-800/50 cursor-pointer">
-                    <div class="flex items-center gap-2"><span class="font-bold text-slate-300">${item.Pair}</span><span class="text-[10px] text-slate-500">${item.Position}</span></div>
-                    <span class="font-mono font-bold ${pl>=0?'text-emerald-400':'text-rose-400'}">${pl>0?'+':''}${pl.toFixed(2)}$</span>
-                </div>`;
+        function processAnalysis() {
+            const closed = allData.filter(d => d.Result !== 'RUNNING');
+            let totalPL = 0;
+            let wins = 0;
+            closed.forEach(d => {
+                const pl = parseFloat(d['P/L ($)'] || 0);
+                totalPL += pl;
+                if (d.Result === 'WIN') wins++;
             });
-            document.getElementById('history-list').innerHTML = histHtml;
-            // Psycho feedback
-             const badEmo = closed.filter(r => (r.Emotion==='FOMO'||r.Emotion==='Revenge') && r.Result==='LOSS').length;
-             const msg = badEmo > 0 ? `⚠️ เสียเพราะอารมณ์ ${badEmo} ครั้ง!` : (winRate>60 ? `🌟 ฟอร์มกำลังดี!` : `📉 สู้ต่อไป`);
-             document.getElementById('psycho-feedback').innerHTML = msg;
+
+            const currentBalance = START_BALANCE + totalPL;
+            document.getElementById('balance-val').innerText = `$${currentBalance.toFixed(2)}`;
+            document.getElementById('winrate-val').innerText = closed.length ? Math.round((wins / closed.length) * 100) + '%' : '0%';
+            document.getElementById('avg-profit-val').innerText = closed.length ? (totalPL / closed.length >= 0 ? '+' : '') + `$${(totalPL / closed.length).toFixed(2)}` : '$0.00';
+            
+            // Lot Suggestion
+            const lotSize = Math.max(0.01, (currentBalance / 15 * 0.01)).toFixed(2);
+            document.getElementById('rec-lot').innerText = `${lotSize} LOT`;
+            document.getElementById('max-risk').innerText = `$${(currentBalance * 0.2).toFixed(2)}`;
+
+            generateAIAdvice(closed);
         }
 
-        function openModal(item) {
-            const m = document.getElementById('detailModal');
-            const isRunning = (item.Result === 'RUNNING' || !item.Exit);
-            document.getElementById('modalID').innerText = item.ID;
-            document.getElementById('modalTitle').innerHTML = `${item.Pair} ${item.Position}`;
-            document.getElementById('modalEntry').innerText = item.Entry;
-            document.getElementById('modalLot').innerText = item.Lot;
-            document.getElementById('modalTags').innerHTML = `<span class="bg-slate-700 px-2 rounded text-xs text-slate-300">${item.Emotion}</span><span class="bg-slate-700 px-2 rounded text-xs text-slate-300 ml-2">${item.Risk}</span>`;
-
-            if(isRunning) {
-                document.getElementById('closeSection').classList.remove('hidden'); document.getElementById('historySection').classList.add('hidden');
-                document.getElementById('formId').value = item.ID;
-                document.getElementById('modalExit').value = ''; document.getElementById('modalPL').value = '';
-                document.getElementById('modalExit').oninput = function() {
-                    const ex = parseFloat(this.value); const en = parseFloat(item.Entry); const lot = parseFloat(item.Lot);
-                    if(!ex) return;
-                    let diff = (item.Position==='BUY') ? (ex-en) : (en-ex);
-                    let mult = item.Pair.includes('JPY') ? 1000 : (item.Pair.includes('XAU') ? 100 : 100000);
-                    let profit = diff*lot*mult;
-                    document.getElementById('modalPL').value = profit.toFixed(2);
-                    document.getElementById('modalPL').className = `bg-transparent text-right font-bold w-24 outline-none ${profit>=0?'text-emerald-400':'text-rose-400'}`;
-                    document.getElementById('modalResult').value = profit>=0 ? 'WIN' : 'LOSS';
-                };
-            } else {
-                document.getElementById('closeSection').classList.add('hidden'); document.getElementById('historySection').classList.remove('hidden');
-                const pl = parseFloat(item['P/L ($)']);
-                document.getElementById('historyPL').innerText = `${pl>0?'+':''}${pl.toFixed(2)}$`;
-                document.getElementById('historyPL').className = `text-2xl font-bold mt-2 ${pl>=0?'text-emerald-400':'text-rose-400'}`;
+        function generateAIAdvice(closed) {
+            const container = document.getElementById('mentor-advice');
+            if (closed.length < 3) {
+                container.innerHTML = `<div class="p-4 bg-slate-900/50 rounded-2xl text-xs text-slate-400">ยังไม่มีข้อมูลเพียงพอ (ต้องการอย่างน้อย 3 ออเดอร์เพื่อให้ Mentor วิเคราะห์)</div>`;
+                return;
             }
-            m.classList.remove('hidden');
-        }
-        function closeModal() { document.getElementById('detailModal').classList.add('hidden'); }
 
-        // INIT
-        setFormActions();
-        if(scriptURL && !scriptURL.includes('HERE')) fetchData();
+            const stats = {
+                fomoTrades: closed.filter(d => d.Emotion === 'Fear').length,
+                noM15: closed.filter(d => d['M15 Signal'] !== 'Yes').length,
+                noTrend: closed.filter(d => d['H1 Trend'] !== 'Yes').length,
+                losses: closed.filter(d => d.Result === 'LOSS').length
+            };
+
+            let adviceHTML = '';
+
+            // Psychology Advice
+            if (stats.fomoTrades > 0) {
+                const winRateFomo = (closed.filter(d => d.Emotion === 'Fear' && d.Result === 'WIN').length / stats.fomoTrades) * 100;
+                if (winRateFomo < 40) {
+                    adviceHTML += `
+                        <div class="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl">
+                            <p class="text-[10px] font-bold text-rose-400 mb-1">🚨 เตือนสภาวะจิตใจ</p>
+                            <p class="text-xs text-white">คุณเสียเงินบ่อยมากเมื่อมีอาการ <b>กลัวตกรถ (FOMO)</b> (Win Rate แค่ ${winRateFomo.toFixed(0)}%) แนะนำให้ "ข้าม" ออเดอร์นั้นไปเลยถ้าไม่ได้ตั้งรอตามแผน</p>
+                        </div>`;
+                }
+            }
+
+            // Technical Checklist Advice
+            if (stats.noM15 > 0) {
+                adviceHTML += `
+                    <div class="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
+                        <p class="text-[10px] font-bold text-amber-400 mb-1">🛠 จุดที่ควรแก้ไข</p>
+                        <p class="text-xs text-white">คุณมักจะกดเข้าเทรดก่อนที่ <b>EMA M15</b> จะตัดกัน การเข้าเร็วเกินไปทำให้คุณโดนลากนานขึ้น ลองรอสัญญาณคอนเฟิร์มให้ชัดเจนกว่านี้</p>
+                    </div>`;
+            }
+
+            const overallWinRate = (closed.filter(d => d.Result === 'WIN').length / closed.length) * 100;
+            if (overallWinRate > 60) {
+                adviceHTML += `
+                    <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
+                        <p class="text-[10px] font-bold text-emerald-400 mb-1">🌟 ทำได้เยี่ยม</p>
+                        <p class="text-xs text-white">วินัยการเช็คลิสต์ของคุณยอดเยี่ยมมาก อัตราชนะ ${overallWinRate.toFixed(0)}% แสดงว่าระบบนี้เหมาะกับคุณแล้ว รักษามาตรฐานนี้ไว้!</p>
+                    </div>`;
+            }
+
+            container.innerHTML = adviceHTML || '<p class="text-xs text-slate-400">รักษามาตรฐานเดิมไว้ คุณกำลังพัฒนามาถูกทางแล้วครับ</p>';
+        }
+
+        function renderActive() {
+            const list = document.getElementById('active-list');
+            const active = allData.filter(d => d.Result === 'RUNNING');
+            document.getElementById('badge-count').innerText = active.length;
+            document.getElementById('badge-count').classList.toggle('hidden', active.length === 0);
+
+            if (!active.length) {
+                list.innerHTML = `<div class="p-12 text-center text-slate-600"><i class="fa-solid fa-wind text-4xl mb-4"></i><p class="text-xs">ไม่มีออเดอร์ค้าง...</p></div>`;
+                return;
+            }
+
+            list.innerHTML = active.map(d => `
+                <div onclick='openCloseModal(${JSON.stringify(d)})' class="glass-card p-5 border-l-4 ${d.Position==='BUY'?'border-emerald-500':'border-rose-500'} active:scale-[0.98] transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-lg">${d.Pair}</h4>
+                            <p class="text-[10px] text-slate-500 uppercase">${d.Date} • ${d.Time}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold ${d.Position==='BUY'?'bg-emerald-500/20 text-emerald-400':'bg-rose-500/20 text-rose-400'}">${d.Position}</span>
+                            <p class="text-xs font-mono mt-2 text-slate-400">${d.Lot} Lot @ ${d.Entry}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('history-list');
+            const history = allData.filter(d => d.Result !== 'RUNNING').reverse().slice(0, 5);
+            list.innerHTML = history.map(d => `
+                <div class="flex items-center justify-between p-4 glass-card text-sm">
+                    <div class="flex items-center gap-3">
+                        <div class="w-2 h-2 rounded-full ${d.Result==='WIN'?'bg-emerald-500 shadow-[0_0_10px_#10b981]':'bg-rose-500'}"></div>
+                        <div>
+                            <p class="font-bold text-slate-200">${d.Pair}</p>
+                            <p class="text-[9px] text-slate-500 uppercase">${d.Position} • ${d.Date}</p>
+                        </div>
+                    </div>
+                    <div class="text-right font-mono font-bold ${parseFloat(d['P/L ($)']) >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
+                        ${parseFloat(d['P/L ($)']) >= 0 ? '+' : ''}${parseFloat(d['P/L ($)']).toFixed(2)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderChart() {
+            const ctx = document.getElementById('equityChart').getContext('2d');
+            const closed = allData.filter(d => d.Result !== 'RUNNING');
+            let bal = START_BALANCE;
+            const points = [START_BALANCE];
+            const labels = ['Start'];
+            closed.forEach((d, i) => {
+                bal += parseFloat(d['P/L ($)'] || 0);
+                points.push(bal);
+                labels.push(`#${i+1}`);
+            });
+
+            if (equityChart) equityChart.destroy();
+            equityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: points,
+                        borderColor: '#38bdf8',
+                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { display: false },
+                        y: { display: false }
+                    }
+                }
+            });
+        }
+
+        function openCloseModal(d) {
+            document.getElementById('close-id').value = d.ID;
+            document.getElementById('exit-price').value = '';
+            document.getElementById('pl-display').value = '$0.00';
+            
+            const inputExit = document.getElementById('exit-price');
+            inputExit.oninput = () => {
+                const ex = parseFloat(inputExit.value);
+                const en = parseFloat(d.Entry);
+                const lot = parseFloat(d.Lot);
+                if (isNaN(ex)) return;
+                let diff = (d.Position === 'BUY') ? (ex - en) : (en - ex);
+                let mult = d.Pair.includes('JPY') ? 1000 : (d.Pair.includes('XAU') ? 100 : 100000);
+                let pl = (diff * lot * mult).toFixed(2);
+                document.getElementById('pl-display').value = `$${pl}`;
+                document.getElementById('pl-display').style.color = pl >= 0 ? '#10b981' : '#f43f5e';
+                document.getElementById('close-result').value = pl >= 0 ? 'WIN' : 'LOSS';
+            };
+
+            document.getElementById('modal-close').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('modal-close').classList.add('hidden'); }
+
+        document.getElementById('recordForm').action = scriptURL;
+        document.getElementById('closeForm').action = scriptURL;
+        fetchData();
     </script>
 </body>
 </html>
