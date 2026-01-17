@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro Trading Mentor v4.1</title>
+    <title>Pro Trading Mentor v4.2</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -37,17 +37,10 @@
             color: white;
             transition: all 0.3s;
         }
-        .input-style:focus {
-            border-color: var(--accent-blue);
-            box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
-            outline: none;
-        }
         .btn-gradient {
             background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
             box-shadow: 0 10px 15px -3px rgba(56, 189, 248, 0.3);
         }
-        .nav-item { transition: all 0.3s ease; }
-        .nav-item.active { color: var(--accent-blue); transform: translateY(-2px); }
         .tab-content { animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -56,12 +49,12 @@
         .checkbox-custom { width: 1.2rem; height: 1.2rem; border-radius: 6px; border: 2px solid #334155; appearance: none; cursor: pointer; position: relative; transition: all 0.2s; }
         .checkbox-custom:checked { background-color: var(--accent-blue); border-color: var(--accent-blue); }
         .checkbox-custom:checked::after { content: '\f00c'; font-family: 'Font Awesome 6 Free'; font-weight: 900; color: white; font-size: 0.7rem; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
 <body class="pb-24">
 
     <script>
-        // ⚠️ ต้องใส่ Apps Script URL ของคุณที่นี่
         const scriptURL = 'https://script.google.com/macros/s/AKfycbyncps3larhrUUDtCWP_C0AXB1PR3oAO9TgFFwLgN9wqYNIA1Sg021XiP2CDBfrjaoz/exec'; 
         let submitted = false;
         let allData = [];
@@ -70,11 +63,10 @@
 
     <iframe name="hidden_iframe" style="display:none;" onload="if(submitted) handleFormResponse();"></iframe>
 
-    <!-- Header -->
     <header class="p-6 flex justify-between items-center sticky top-0 z-40 backdrop-blur-md">
         <div>
             <p class="text-[10px] font-bold text-sky-400 uppercase tracking-[0.2em]">Personal Mentor</p>
-            <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">TradeMaster <span class="text-sky-400">v4.1</span></h1>
+            <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">TradeMaster <span class="text-sky-400">v4.2</span></h1>
         </div>
         <div class="flex gap-3">
             <button onclick="fetchData()" class="w-10 h-10 rounded-2xl glass-card flex items-center justify-center text-slate-400 hover:text-white transition">
@@ -139,7 +131,6 @@
                     </div>
                 </div>
 
-                <!-- Technical Checklist -->
                 <div class="mt-5 glass-card p-6 border-t-4 border-sky-500">
                     <div class="flex items-center gap-2 mb-4">
                         <i class="fa-solid fa-shield-check text-sky-500"></i>
@@ -161,24 +152,23 @@
                     </div>
                 </div>
 
-                <!-- Psychology Section (Thai) -->
                 <div class="mt-5 glass-card p-6">
                     <label class="text-[10px] font-bold text-slate-500 uppercase mb-3 block">สภาวะจิตใจตอนเข้าเทรด</label>
                     <div class="flex gap-2 mb-4 overflow-x-auto pb-2">
                         <label class="shrink-0 cursor-pointer">
-                            <input type="radio" name="Emotion" value="Neutral" checked class="hidden peer">
+                            <input type="radio" name="Emotion" value="ปกติ" checked class="hidden peer">
                             <div class="px-4 py-2 rounded-full border border-white/10 text-[11px] peer-checked:bg-white peer-checked:text-black transition">😐 ปกติ</div>
                         </label>
                         <label class="shrink-0 cursor-pointer">
-                            <input type="radio" name="Emotion" value="Fear" class="hidden peer">
+                            <input type="radio" name="Emotion" value="FOMO" class="hidden peer">
                             <div class="px-4 py-2 rounded-full border border-white/10 text-[11px] peer-checked:bg-amber-500 peer-checked:text-white transition">😨 กลัวตกรถ (FOMO)</div>
                         </label>
                         <label class="shrink-0 cursor-pointer">
-                            <input type="radio" name="Emotion" value="Greed" class="hidden peer">
+                            <input type="radio" name="Emotion" value="มั่นใจเกิน" class="hidden peer">
                             <div class="px-4 py-2 rounded-full border border-white/10 text-[11px] peer-checked:bg-purple-500 peer-checked:text-white transition">🤑 โลภ/มั่นใจเกิน</div>
                         </label>
                         <label class="shrink-0 cursor-pointer">
-                            <input type="radio" name="Emotion" value="Revenge" class="hidden peer">
+                            <input type="radio" name="Emotion" value="เอาคืน" class="hidden peer">
                             <div class="px-4 py-2 rounded-full border border-white/10 text-[11px] peer-checked:bg-rose-500 peer-checked:text-white transition">🔥 อยากเอาคืน</div>
                         </label>
                     </div>
@@ -217,16 +207,14 @@
                     <div class="w-10 h-10 rounded-2xl bg-indigo-500/20 flex items-center justify-center text-indigo-400">
                         <i class="fa-solid fa-brain"></i>
                     </div>
-                    <div>
-                        <h3 class="text-sm font-bold">บทวิเคราะห์จาก Mentor</h3>
-                        <p class="text-[9px] text-slate-500 uppercase">เจาะลึกพฤติกรรมของคุณ</p>
-                    </div>
+                    <h3 class="text-sm font-bold">บทวิเคราะห์จาก Mentor</h3>
                 </div>
-                <div id="mentor-advice" class="space-y-4">
-                    <div class="p-4 bg-slate-900/50 rounded-2xl text-xs text-slate-400 italic">กำลังรอข้อมูลบันทึกเพิ่มเติม...</div>
-                </div>
+                <div id="mentor-advice" class="space-y-4"></div>
             </div>
 
+            <div class="flex items-center justify-between px-2">
+                <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest">ประวัติ 5 ไม้ล่าสุด (กดเพื่อดู)</h3>
+            </div>
             <div id="history-list" class="space-y-3 pb-10"></div>
         </section>
 
@@ -256,6 +244,22 @@
         </button>
     </nav>
 
+    <!-- Modal: Trade Detail Inspector (New!) -->
+    <div id="modal-detail" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl">
+        <div class="glass-card w-full max-w-sm overflow-hidden animate-in fade-in zoom-in duration-300 border-sky-500/30">
+            <div class="p-6 border-b border-white/5 flex justify-between items-center bg-sky-500/5">
+                <div>
+                    <h3 class="font-bold text-lg" id="det-pair">---</h3>
+                    <p class="text-[9px] text-slate-500 uppercase tracking-widest" id="det-id">---</p>
+                </div>
+                <button onclick="closeDetail()" class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 space-y-2 max-h-[70vh] overflow-y-auto" id="det-content">
+                <!-- Details injected here -->
+            </div>
+        </div>
+    </div>
+
     <!-- Modal: Close Position -->
     <div id="modal-close" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-6 bg-black/80 backdrop-blur-md">
         <div class="glass-card w-full max-w-sm overflow-hidden animate-in fade-in zoom-in duration-300">
@@ -268,7 +272,6 @@
                     <input type="hidden" name="action" value="update">
                     <input type="hidden" name="id" id="close-id">
                     <input type="hidden" name="Result" id="close-result">
-                    
                     <div class="space-y-4">
                         <div>
                             <label class="text-[10px] font-bold text-slate-500 uppercase mb-2 block">ราคาที่ปิด (Exit)</label>
@@ -278,9 +281,9 @@
                             <span class="text-xs font-bold text-slate-400">กำไร/ขาดทุนสุทธิ</span>
                             <input type="text" name="P/L ($)" id="pl-display" class="bg-transparent text-right font-bold text-lg outline-none w-24" readonly>
                         </div>
-                        <textarea name="Review" placeholder="เขียนบันทึกหลังปิดออเดอร์ (ไม้หน้าควรทำอย่างไร)..." class="input-style w-full p-4 text-sm h-24 resize-none"></textarea>
+                        <textarea name="Review" placeholder="บทเรียนที่ได้รับจากไม้นี้..." class="input-style w-full p-4 text-sm h-24 resize-none"></textarea>
                     </div>
-                    <button type="submit" class="w-full mt-6 py-4 bg-white text-black font-bold rounded-2xl hover:bg-sky-400 transition-colors">ยืนยันการปิด</button>
+                    <button type="submit" class="w-full mt-6 py-4 bg-white text-black font-bold rounded-2xl">ยืนยันการปิด</button>
                 </form>
             </div>
         </div>
@@ -288,10 +291,8 @@
 
     <!-- Notification -->
     <div id="toast" class="fixed top-8 left-1/2 -translate-x-1/2 glass-card px-6 py-4 flex items-center gap-3 transition-all duration-500 -translate-y-32 z-[100]">
-        <div class="w-8 h-8 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-500">
-            <i class="fa-solid fa-check"></i>
-        </div>
-        <span id="toast-msg" class="text-sm font-bold">บันทึกเรียบร้อย</span>
+        <div class="w-8 h-8 rounded-full bg-sky-500/20 flex items-center justify-center text-sky-500"><i class="fa-solid fa-check"></i></div>
+        <span id="toast-msg" class="text-sm font-bold">สำเร็จ</span>
     </div>
 
     <script>
@@ -322,13 +323,13 @@
                 document.getElementById('input-id').value = 'TRD-' + Date.now();
                 document.getElementById('input-date').value = now.toLocaleDateString('th-TH');
                 document.getElementById('input-time').value = now.toLocaleTimeString('th-TH', {hour:'2-digit', minute:'2-digit'});
-                document.getElementById('btn-submit').innerText = 'กำลังส่งข้อมูล...';
+                document.getElementById('btn-submit').innerText = 'กำลังส่ง...';
             }
         }
 
         function handleFormResponse() {
             if (submitted) {
-                showToast('อัปเดตข้อมูลสำเร็จ');
+                showToast('อัปเดตเรียบร้อย');
                 submitted = false;
                 document.getElementById('recordForm').reset();
                 document.getElementById('btn-submit').innerText = 'เปิดออเดอร์';
@@ -352,74 +353,35 @@
 
         function processAnalysis() {
             const closed = allData.filter(d => d.Result !== 'RUNNING');
-            let totalPL = 0;
-            let wins = 0;
+            let totalPL = 0; let wins = 0;
             closed.forEach(d => {
                 const pl = parseFloat(d['P/L ($)'] || 0);
-                totalPL += pl;
-                if (d.Result === 'WIN') wins++;
+                totalPL += pl; if (d.Result === 'WIN') wins++;
             });
-
-            const currentBalance = START_BALANCE + totalPL;
-            document.getElementById('balance-val').innerText = `$${currentBalance.toFixed(2)}`;
+            const bal = START_BALANCE + totalPL;
+            document.getElementById('balance-val').innerText = `$${bal.toFixed(2)}`;
             document.getElementById('winrate-val').innerText = closed.length ? Math.round((wins / closed.length) * 100) + '%' : '0%';
             document.getElementById('avg-profit-val').innerText = closed.length ? (totalPL / closed.length >= 0 ? '+' : '') + `$${(totalPL / closed.length).toFixed(2)}` : '$0.00';
-            
-            // Lot Suggestion
-            const lotSize = Math.max(0.01, (currentBalance / 15 * 0.01)).toFixed(2);
-            document.getElementById('rec-lot').innerText = `${lotSize} LOT`;
-            document.getElementById('max-risk').innerText = `$${(currentBalance * 0.2).toFixed(2)}`;
-
+            document.getElementById('rec-lot').innerText = `${Math.max(0.01, (bal / 15 * 0.01)).toFixed(2)} LOT`;
+            document.getElementById('max-risk').innerText = `$${(bal * 0.2).toFixed(2)}`;
             generateAIAdvice(closed);
         }
 
         function generateAIAdvice(closed) {
             const container = document.getElementById('mentor-advice');
             if (closed.length < 3) {
-                container.innerHTML = `<div class="p-4 bg-slate-900/50 rounded-2xl text-xs text-slate-400">ยังไม่มีข้อมูลเพียงพอ (ต้องการอย่างน้อย 3 ออเดอร์เพื่อให้ Mentor วิเคราะห์)</div>`;
+                container.innerHTML = `<div class="p-4 bg-slate-900/50 rounded-2xl text-xs text-slate-400">ต้องการ 3 ไม้เพื่อวิเคราะห์...</div>`;
                 return;
             }
-
-            const stats = {
-                fomoTrades: closed.filter(d => d.Emotion === 'Fear').length,
-                noM15: closed.filter(d => d['M15 Signal'] !== 'Yes').length,
-                noTrend: closed.filter(d => d['H1 Trend'] !== 'Yes').length,
-                losses: closed.filter(d => d.Result === 'LOSS').length
-            };
-
-            let adviceHTML = '';
-
-            // Psychology Advice
-            if (stats.fomoTrades > 0) {
-                const winRateFomo = (closed.filter(d => d.Emotion === 'Fear' && d.Result === 'WIN').length / stats.fomoTrades) * 100;
-                if (winRateFomo < 40) {
-                    adviceHTML += `
-                        <div class="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl">
-                            <p class="text-[10px] font-bold text-rose-400 mb-1">🚨 เตือนสภาวะจิตใจ</p>
-                            <p class="text-xs text-white">คุณเสียเงินบ่อยมากเมื่อมีอาการ <b>กลัวตกรถ (FOMO)</b> (Win Rate แค่ ${winRateFomo.toFixed(0)}%) แนะนำให้ "ข้าม" ออเดอร์นั้นไปเลยถ้าไม่ได้ตั้งรอตามแผน</p>
-                        </div>`;
-                }
+            const stats = { fomo: closed.filter(d => d.Emotion === 'FOMO').length, noM15: closed.filter(d => d['M15 Signal'] !== 'Yes').length };
+            let html = '';
+            if (stats.fomo > 0) {
+                html += `<div class="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-xs"><p class="font-bold text-rose-400 mb-1">🚨 เตือนสติ</p>คุณเทรดด้วยอารมณ์ FOMO บ่อย (${stats.fomo} ครั้ง) ซึ่งมักเป็นจุดเริ่มของความเสี่ยง</div>`;
             }
-
-            // Technical Checklist Advice
             if (stats.noM15 > 0) {
-                adviceHTML += `
-                    <div class="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl">
-                        <p class="text-[10px] font-bold text-amber-400 mb-1">🛠 จุดที่ควรแก้ไข</p>
-                        <p class="text-xs text-white">คุณมักจะกดเข้าเทรดก่อนที่ <b>EMA M15</b> จะตัดกัน การเข้าเร็วเกินไปทำให้คุณโดนลากนานขึ้น ลองรอสัญญาณคอนเฟิร์มให้ชัดเจนกว่านี้</p>
-                    </div>`;
+                html += `<div class="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl text-xs mt-2"><p class="font-bold text-amber-400 mb-1">🛠 จุดบอดทางเทคนิค</p>คุณลืมรอ EMA M15 ตัดกันบ่อยครั้ง แนะนำให้อดทนรอสัญญาณเพื่อลดการโดนลาก</div>`;
             }
-
-            const overallWinRate = (closed.filter(d => d.Result === 'WIN').length / closed.length) * 100;
-            if (overallWinRate > 60) {
-                adviceHTML += `
-                    <div class="p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
-                        <p class="text-[10px] font-bold text-emerald-400 mb-1">🌟 ทำได้เยี่ยม</p>
-                        <p class="text-xs text-white">วินัยการเช็คลิสต์ของคุณยอดเยี่ยมมาก อัตราชนะ ${overallWinRate.toFixed(0)}% แสดงว่าระบบนี้เหมาะกับคุณแล้ว รักษามาตรฐานนี้ไว้!</p>
-                    </div>`;
-            }
-
-            container.innerHTML = adviceHTML || '<p class="text-xs text-slate-400">รักษามาตรฐานเดิมไว้ คุณกำลังพัฒนามาถูกทางแล้วครับ</p>';
+            container.innerHTML = html || '<p class="text-xs text-slate-400">รักษามาตรฐานเดิมไว้ครับ</p>';
         }
 
         function renderActive() {
@@ -427,35 +389,26 @@
             const active = allData.filter(d => d.Result === 'RUNNING');
             document.getElementById('badge-count').innerText = active.length;
             document.getElementById('badge-count').classList.toggle('hidden', active.length === 0);
-
-            if (!active.length) {
-                list.innerHTML = `<div class="p-12 text-center text-slate-600"><i class="fa-solid fa-wind text-4xl mb-4"></i><p class="text-xs">ไม่มีออเดอร์ค้าง...</p></div>`;
-                return;
-            }
-
             list.innerHTML = active.map(d => `
-                <div onclick='openCloseModal(${JSON.stringify(d)})' class="glass-card p-5 border-l-4 ${d.Position==='BUY'?'border-emerald-500':'border-rose-500'} active:scale-[0.98] transition">
-                    <div class="flex justify-between items-start">
-                        <div>
-                            <h4 class="font-bold text-lg">${d.Pair}</h4>
-                            <p class="text-[10px] text-slate-500 uppercase">${d.Date} • ${d.Time}</p>
-                        </div>
+                <div onclick='openCloseModal(${JSON.stringify(d)})' class="glass-card p-5 border-l-4 ${d.Position==='BUY'?'border-emerald-500':'border-rose-500'} active:scale-95 transition">
+                    <div class="flex justify-between items-center">
+                        <div><h4 class="font-bold">${d.Pair}</h4><p class="text-[10px] text-slate-500">${d.Date} ${d.Time}</p></div>
                         <div class="text-right">
-                            <span class="px-3 py-1 rounded-full text-[10px] font-bold ${d.Position==='BUY'?'bg-emerald-500/20 text-emerald-400':'bg-rose-500/20 text-rose-400'}">${d.Position}</span>
-                            <p class="text-xs font-mono mt-2 text-slate-400">${d.Lot} Lot @ ${d.Entry}</p>
+                            <span class="px-2 py-1 rounded-lg text-[10px] font-bold ${d.Position==='BUY'?'bg-emerald-500/20 text-emerald-400':'bg-rose-500/20 text-rose-400'}">${d.Position}</span>
+                            <p class="text-xs font-mono mt-1">${d.Lot}L @ ${d.Entry}</p>
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `).join('') || `<div class="p-12 text-center text-slate-600">ไม่มีออเดอร์ค้าง</div>`;
         }
 
         function renderHistory() {
             const list = document.getElementById('history-list');
             const history = allData.filter(d => d.Result !== 'RUNNING').reverse().slice(0, 5);
             list.innerHTML = history.map(d => `
-                <div class="flex items-center justify-between p-4 glass-card text-sm">
+                <div onclick='showDetail(${JSON.stringify(d)})' class="flex items-center justify-between p-4 glass-card active:bg-white/5 transition-colors cursor-pointer">
                     <div class="flex items-center gap-3">
-                        <div class="w-2 h-2 rounded-full ${d.Result==='WIN'?'bg-emerald-500 shadow-[0_0_10px_#10b981]':'bg-rose-500'}"></div>
+                        <div class="w-1.5 h-8 rounded-full ${d.Result==='WIN'?'bg-emerald-500':'bg-rose-500'}"></div>
                         <div>
                             <p class="font-bold text-slate-200">${d.Pair}</p>
                             <p class="text-[9px] text-slate-500 uppercase">${d.Position} • ${d.Date}</p>
@@ -463,59 +416,58 @@
                     </div>
                     <div class="text-right font-mono font-bold ${parseFloat(d['P/L ($)']) >= 0 ? 'text-emerald-400' : 'text-rose-400'}">
                         ${parseFloat(d['P/L ($)']) >= 0 ? '+' : ''}${parseFloat(d['P/L ($)']).toFixed(2)}
+                        <i class="fa-solid fa-chevron-right text-[10px] ml-2 opacity-30"></i>
                     </div>
                 </div>
             `).join('');
         }
 
-        function renderChart() {
-            const ctx = document.getElementById('equityChart').getContext('2d');
-            const closed = allData.filter(d => d.Result !== 'RUNNING');
-            let bal = START_BALANCE;
-            const points = [START_BALANCE];
-            const labels = ['Start'];
-            closed.forEach((d, i) => {
-                bal += parseFloat(d['P/L ($)'] || 0);
-                points.push(bal);
-                labels.push(`#${i+1}`);
-            });
+        function showDetail(d) {
+            document.getElementById('det-pair').innerText = `${d.Pair} (${d.Position})`;
+            document.getElementById('det-id').innerText = d.ID;
+            
+            const checks = [
+                {k:'H1 Trend', l:'เทรนด์ H1'},
+                {k:'M15 Signal', l:'EMA M15'},
+                {k:'ADX > 20', l:'แรงส่ง ADX'}
+            ];
 
-            if (equityChart) equityChart.destroy();
-            equityChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        data: points,
-                        borderColor: '#38bdf8',
-                        backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                        borderWidth: 3,
-                        pointRadius: 0,
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { display: false },
-                        y: { display: false }
-                    }
-                }
-            });
+            const checkHtml = checks.map(c => `
+                <div class="flex items-center gap-2 text-[11px] ${d[c.k]==='Yes'?'text-emerald-400':'text-slate-500'}">
+                    <i class="fa-solid ${d[c.k]==='Yes'?'fa-circle-check':'fa-circle-xmark'}"></i> ${c.l}
+                </div>
+            `).join('');
+
+            const content = `
+                <div class="detail-row"><span class="text-slate-500 text-xs">สถานะ</span><span class="font-bold ${d.Result==='WIN'?'text-emerald-400':'text-rose-400'}">${d.Result}</span></div>
+                <div class="detail-row"><span class="text-slate-500 text-xs">Lot Size</span><span class="font-bold">${d.Lot}</span></div>
+                <div class="detail-row"><span class="text-slate-500 text-xs">ราคาเข้า (Entry)</span><span class="font-mono text-sky-400">${d.Entry}</span></div>
+                <div class="detail-row"><span class="text-slate-500 text-xs">ราคาปิด (Exit)</span><span class="font-mono text-amber-400">${d.Exit}</span></div>
+                <div class="detail-row"><span class="text-slate-500 text-xs">กำไร/ขาดทุน</span><span class="font-bold ${parseFloat(d['P/L ($)'])>=0?'text-emerald-400':'text-rose-400'}">$${d['P/L ($)']}</span></div>
+                <div class="mt-4 pt-4 border-t border-white/5">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase mb-2">Checklist ของไม้นี้</p>
+                    <div class="grid grid-cols-3 gap-2">${checkHtml}</div>
+                </div>
+                <div class="mt-4 p-4 bg-slate-900/50 rounded-2xl">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase mb-1">ความรู้สึกตอนเข้า: <span class="text-white">${d.Emotion || 'ไม่ได้บันทึก'}</span></p>
+                    <p class="text-xs text-slate-300 italic">"${d.Notes || '-'}"</p>
+                </div>
+                <div class="mt-2 p-4 bg-indigo-500/5 rounded-2xl border border-indigo-500/10">
+                    <p class="text-[10px] font-bold text-indigo-400 uppercase mb-1">บันทึกหลังปิดไม้</p>
+                    <p class="text-xs text-slate-300">"${d.Review || '-'}"</p>
+                </div>
+            `;
+            document.getElementById('det-content').innerHTML = content;
+            document.getElementById('modal-detail').classList.remove('hidden');
         }
+
+        function closeDetail() { document.getElementById('modal-detail').classList.add('hidden'); }
 
         function openCloseModal(d) {
             document.getElementById('close-id').value = d.ID;
-            document.getElementById('exit-price').value = '';
-            document.getElementById('pl-display').value = '$0.00';
-            
             const inputExit = document.getElementById('exit-price');
             inputExit.oninput = () => {
-                const ex = parseFloat(inputExit.value);
-                const en = parseFloat(d.Entry);
-                const lot = parseFloat(d.Lot);
+                const ex = parseFloat(inputExit.value); const en = parseFloat(d.Entry); const lot = parseFloat(d.Lot);
                 if (isNaN(ex)) return;
                 let diff = (d.Position === 'BUY') ? (ex - en) : (en - ex);
                 let mult = d.Pair.includes('JPY') ? 1000 : (d.Pair.includes('XAU') ? 100 : 100000);
@@ -524,11 +476,23 @@
                 document.getElementById('pl-display').style.color = pl >= 0 ? '#10b981' : '#f43f5e';
                 document.getElementById('close-result').value = pl >= 0 ? 'WIN' : 'LOSS';
             };
-
             document.getElementById('modal-close').classList.remove('hidden');
         }
 
         function closeModal() { document.getElementById('modal-close').classList.add('hidden'); }
+
+        function renderChart() {
+            const ctx = document.getElementById('equityChart').getContext('2d');
+            const closed = allData.filter(d => d.Result !== 'RUNNING');
+            let bal = START_BALANCE; const points = [START_BALANCE]; const labels = ['0'];
+            closed.forEach((d, i) => { bal += parseFloat(d['P/L ($)'] || 0); points.push(bal); labels.push((i+1).toString()); });
+            if (equityChart) equityChart.destroy();
+            equityChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets: [{ data: points, borderColor: '#38bdf8', borderWidth: 3, pointRadius: 0, fill: true, backgroundColor: 'rgba(56,189,248,0.1)', tension: 0.4 }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+            });
+        }
 
         document.getElementById('recordForm').action = scriptURL;
         document.getElementById('closeForm').action = scriptURL;
